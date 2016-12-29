@@ -1,17 +1,17 @@
 module.exports = {
-  name: 'Person',
+  name: `Person`,
   type: {
-    type: 'object',
+    type: `object`,
     optional: false,
     members: {
       firstName: {
-        type: 'generic',
-        name: 'T',
-        optional: false
-      }
+        type: `generic`,
+        name: `T`,
+        optional: false,
+      },
     },
   },
   params: [{
-    name: 'T', bound: null
-  }]
+    name: `T`, bound: null,
+  }],
 };

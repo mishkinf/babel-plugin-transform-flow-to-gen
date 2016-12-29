@@ -7,11 +7,13 @@ import GEN from './GEN';
 const gen = testcheck.gen;
 
 function generateSample(fileName, args, callback) {
+  // eslint-disable-next-line import/no-dynamic-require
   const ast = require(`./__fixtures__/${fileName}`);
   const sourceAst = transform(babel, ast);
   const {code} = generate(sourceAst);
 
   let fn;
+  // eslint-disable-next-line no-eval
   eval(`var ${GEN} = gen; fn = ${code};`);
 
   const sample = testcheck.sample(fn(...args))[0];
@@ -20,18 +22,18 @@ function generateSample(fileName, args, callback) {
 
 describe(`transform`, () => {
   it(`transforms a simple ast`, done => {
-    generateSample('transform-01', [], result => {
-      expect(typeof result.firstName).toEqual('string');
+    generateSample(`transform-01`, [], result => {
+      expect(typeof result.firstName).toEqual(`string`);
       done();
     });
   });
 
   it(`transforms an ast with generic inputs`, done => {
-    generateSample('transform-02', [gen.string], result1 => {
-      expect(typeof result1.firstName).toEqual('string');
+    generateSample(`transform-02`, [gen.string], result1 => {
+      expect(typeof result1.firstName).toEqual(`string`);
 
-      generateSample('transform-02', [gen.int], result2 => {
-        expect(typeof result2.firstName).toEqual('number');
+      generateSample(`transform-02`, [gen.int], result2 => {
+        expect(typeof result2.firstName).toEqual(`number`);
         done();
       });
     });

@@ -1,6 +1,6 @@
 // @flow
 
-type Person<T: string> = {
+export type Person<T: string> = {
   firstName: string,
   lastName?: string,
   age: number,

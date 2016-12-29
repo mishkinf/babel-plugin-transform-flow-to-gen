@@ -1,3 +1,3 @@
 // @flow
 
-type BigNumber = number;
+export type BigNumber = number;

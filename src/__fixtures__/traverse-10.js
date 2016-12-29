@@ -1,3 +1,9 @@
-type Store = {
-  owners: Owners[]
+// @flow
+
+export type Store = {
+  owners: Owner[]
+};
+
+type Owner = {
+  name: string
 };

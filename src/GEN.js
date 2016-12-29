@@ -1,1 +1,1 @@
-export default '__GEN__';
+export default `__GEN__`;

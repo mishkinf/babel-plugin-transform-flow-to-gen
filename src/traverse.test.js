@@ -10,14 +10,13 @@ function parseFixture(fileName, callback) {
 
   const ast = babylon.parse(buf.toString(), {
     sourceType: `module`,
-    plugins: [`flow`]
+    plugins: [`flow`],
   });
 
   babelTraverse(ast, {
-    TypeAlias: path => {
-      const result = traverse(path);
-      callback(result);
-    }
+    TypeAlias: p => {
+      callback(traverse(p));
+    },
   });
 }
 
@@ -96,9 +95,9 @@ describe(`traverse`, () => {
       expect(result.name).toEqual(`Enum`);
       expect(result.type.type).toEqual(`union`);
       expect(result.type.entries.length).toEqual(3);
-      expect(result.type.entries[0].name).toEqual('A');
-      expect(result.type.entries[1].name).toEqual('B');
-      expect(result.type.entries[2].name).toEqual('C');
+      expect(result.type.entries[0].name).toEqual(`A`);
+      expect(result.type.entries[1].name).toEqual(`B`);
+      expect(result.type.entries[2].name).toEqual(`C`);
       done();
     });
   });
@@ -108,9 +107,9 @@ describe(`traverse`, () => {
       expect(result.name).toEqual(`Enum`);
       expect(result.type.type).toEqual(`intersection`);
       expect(result.type.entries.length).toEqual(3);
-      expect(result.type.entries[0].name).toEqual('A');
-      expect(result.type.entries[1].name).toEqual('B');
-      expect(result.type.entries[2].name).toEqual('C');
+      expect(result.type.entries[0].name).toEqual(`A`);
+      expect(result.type.entries[1].name).toEqual(`B`);
+      expect(result.type.entries[2].name).toEqual(`C`);
       done();
     });
   });
@@ -131,10 +130,10 @@ describe(`traverse`, () => {
     parseFixture(`traverse-10`, result => {
       expect(result.name).toEqual(`Store`);
       expect(result.type.type).toEqual(`object`);
-      expect(result.type.members.owners.type).toEqual('array');
-      expect(result.type.members.owners.elements.type).toEqual('generic');
-      expect(result.type.members.owners.elements.name).toEqual('Owners');
+      expect(result.type.members.owners.type).toEqual(`array`);
+      expect(result.type.members.owners.elements.type).toEqual(`generic`);
+      expect(result.type.members.owners.elements.name).toEqual(`Owner`);
       done();
     });
-  })
+  });
 });

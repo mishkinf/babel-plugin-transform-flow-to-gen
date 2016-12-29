@@ -1,14 +1,14 @@
 module.exports = {
-  name: 'Person',
+  name: `Person`,
   type: {
-    type: 'object',
+    type: `object`,
     optional: false,
     members: {
       firstName: {
-        type: 'string',
-        optional: false
-      }
+        type: `string`,
+        optional: false,
+      },
     },
   },
-  params: []
+  params: [],
 };

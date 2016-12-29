@@ -1,3 +1,3 @@
 // @flow
 
-type Side = 'right' | 'left';
+export type Side = 'right' | 'left';

@@ -3,22 +3,24 @@ import transform from './transform';
 import GEN from './GEN';
 
 export default function (babel) {
-  const { types: t } = babel;
+  const {types: t} = babel;
 
   return {
-    inherits: require("babel-plugin-syntax-flow"),
+    inherits: require(`babel-plugin-syntax-flow`),
 
     visitor: {
       Program(path) {
         const len = path.node.body.length;
         let index = -1;
-        let i = -1;
+        let i = 0;
 
-        while (++i < len) {
+        while (i < len) {
           if (t.isTypeAlias(path.node.body[i])) {
             index = i;
             break;
           }
+
+          i += 1;
         }
 
         if (index > -1) {
@@ -29,7 +31,7 @@ export default function (babel) {
       TypeAlias(path) {
         const ast = transform(babel, traverse(path));
         path.replaceWithMultiple(ast);
-      }
-    }
+      },
+    },
   };
 }

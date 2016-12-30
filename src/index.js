@@ -28,6 +28,24 @@ export default function (babel) {
           path.node.body.splice(index, 0, requireStatement);
         }
       },
+
+      ExportNamedDeclaration(path) {
+        if (path.node.exportKind === `type`) {
+          const {declaration} = path.node;
+
+          const namedExport = {
+            type: `ExportNamedDeclaration`,
+            specifiers: [t.exportSpecifier(
+              declaration.id,
+              declaration.id,
+            )],
+            exportKind: `value`,
+          };
+
+          path.replaceWithMultiple([declaration, namedExport]);
+        }
+      },
+
       TypeAlias(path) {
         const ast = transform(babel, traverse(path));
         path.replaceWithMultiple(ast);

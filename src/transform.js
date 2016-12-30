@@ -26,6 +26,8 @@ function typeToGen(babel, params, obj) {
     case `stringliteral`: {
       return t.identifier(`${GEN}.return('${obj.value}')`);
     }
+    case `boolean`:
+      return t.identifier(`${GEN}.boolean`);
     case `string`:
       return t.identifier(`${GEN}.resize(20, ${GEN}.alphaNumString)`);
     case `number`:

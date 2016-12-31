@@ -17,7 +17,7 @@ By running this Babel transform on your code:
 
 ## Demo?
 
-[DEMO!](https://demo-ehefklufbm.now.sh/)
+[DEMO!](https://demo-bhabhjfxho.now.sh/)
 
 ## Getting Started
 

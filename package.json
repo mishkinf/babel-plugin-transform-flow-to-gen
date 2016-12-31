@@ -2,18 +2,20 @@
   "name": "babel-plugin-transform-flow-to-gen",
   "version": "0.0.1",
   "description": "Turn flow definitions into generator functions",
-  "main": "index.js",
+  "main": "lib/index.js",
   "author": "Gabe Scholz",
   "license": "MIT",
   "scripts": {
     "test": "jest",
-    "lint": "eslint --fix --ext .js src/"
+    "lint": "eslint --fix --ext .js src/",
+    "prepublish": "rm -rf lib && babel src --out-dir lib --ignore __fixtures__,test.js"
   },
   "dependencies": {
     "babel-plugin-syntax-flow": "^6.18.0",
     "testcheck": "^0.1.4"
   },
   "devDependencies": {
+    "babel-cli": "^6.18.0",
     "babel-core": "^6.21.0",
     "babel-eslint": "^7.1.1",
     "babel-generator": "^6.21.0",
@@ -42,8 +44,7 @@
     "extends": [
       "airbnb-base"
     ],
-    "plugins": [
-    ],
+    "plugins": [],
     "env": {
       "browser": true,
       "jest": true
@@ -61,8 +62,14 @@
       "import/no-extraneous-dependencies": 0,
       "no-use-before-define": 0,
       "global-require": 0,
-      "object-curly-spacing": ["error", "never"],
-      "array-bracket-spacing": ["error", "never"]
+      "object-curly-spacing": [
+        "error",
+        "never"
+      ],
+      "array-bracket-spacing": [
+        "error",
+        "never"
+      ]
     }
   }
 }

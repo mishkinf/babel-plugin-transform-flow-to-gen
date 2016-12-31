@@ -1,5 +1,3 @@
-type Other = {
+export type Other = {
   favoriteFood: string
 };
-
-export {Other};

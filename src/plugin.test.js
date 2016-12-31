@@ -1,7 +1,7 @@
 import path from 'path';
 import * as babel from 'babel-core';
 import testcheck, {gen} from 'testcheck';
-import plugin from './index';
+import plugin from './plugin';
 
 describe(`babel plugin`, () => {
   it(``, () => {
@@ -11,6 +11,7 @@ describe(`babel plugin`, () => {
       plugins: [`syntax-flow`, plugin],
     });
 
+    // hacky way to confirm that plugin is working
     // eslint-disable-next-line no-eval
     eval(code);
     const {Worker} = exports;

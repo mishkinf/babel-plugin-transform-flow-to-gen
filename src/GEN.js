@@ -1,1 +1,1 @@
-export default `GEN$`;
+export default `$GEN`;

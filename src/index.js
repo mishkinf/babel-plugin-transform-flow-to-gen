@@ -15,7 +15,14 @@ export default function (babel) {
         let i = 0;
 
         while (i < len) {
-          if (t.isTypeAlias(path.node.body[i])) {
+          const statement = path.node.body[i];
+          const isTypeAlias = t.isTypeAlias(statement);
+          const isTypeAliasExport = (
+            t.isExportNamedDeclaration(statement) &&
+            t.isTypeAlias(statement.declaration)
+          );
+
+          if (isTypeAlias || isTypeAliasExport) {
             index = i;
             break;
           }

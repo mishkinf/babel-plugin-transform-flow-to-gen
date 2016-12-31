@@ -93,8 +93,11 @@ export const generic = (fn, args = []) =>
     return result;
   });
 
-export const noop = () =>
-  gen.return(() => {});
+export const mock = () =>
+  gen.bind(gen.undefined, () =>
+    // use a jest mock if this is being run with jest
+    typeof jest === 'object' ? gen.return(jest.fn()) : gen.return(() => {})
+  );
 
 export const empty = () =>
   gen.return({});

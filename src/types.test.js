@@ -193,4 +193,14 @@ describe(`types`, () => {
       expect(mock).toHaveBeenCalledTimes(samp.length);
     });
   });
+
+  describe(`mock`, () => {
+    it(`creates a mock function (jest mock if available)`, () => {
+      const gen = types.mock();
+
+      sample(gen).forEach(s => {
+        expect(s.mock).toBeTruthy();
+      });
+    });
+  });
 });

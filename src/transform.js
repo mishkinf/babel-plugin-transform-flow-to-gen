@@ -80,7 +80,7 @@ export default function transform(babel, type) {
           ),
         }).expression;
       case `function`:
-        return t.identifier(`${GEN}.noop()`);
+        return t.identifier(`${GEN}.mock()`);
       case `nullable`:
         return babel.template(`${GEN}.nullable(OBJ)`)({
           OBJ: createGen(params, obj.value),

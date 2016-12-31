@@ -38,4 +38,12 @@ describe(`transform`, () => {
       });
     });
   });
+
+  // FIXME
+  // it(`transforms an ast with recursion`, done => {
+  //   generateSample(`transform-03`, [], result => {
+  //     expect(typeof result.firstName).toEqual(`string`);
+  //     done();
+  //   });
+  // });
 });

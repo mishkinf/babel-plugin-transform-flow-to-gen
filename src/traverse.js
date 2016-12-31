@@ -42,8 +42,8 @@ function getType(path, optional = false) {
       }, {...base, members: {}});
     }
     case `array`: {
-      const elements = getType(path.elementType);
-      return {...base, elements};
+      const elementType = getType(path.elementType);
+      return {...base, elementType};
     }
     case `stringliteral`: {
       const value = path.value;

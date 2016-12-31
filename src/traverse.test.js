@@ -131,8 +131,8 @@ describe(`traverse`, () => {
       expect(result.name).toEqual(`Store`);
       expect(result.type.type).toEqual(`object`);
       expect(result.type.members.owners.type).toEqual(`array`);
-      expect(result.type.members.owners.elements.type).toEqual(`generic`);
-      expect(result.type.members.owners.elements.name).toEqual(`Owner`);
+      expect(result.type.members.owners.elementType.type).toEqual(`generic`);
+      expect(result.type.members.owners.elementType.name).toEqual(`Owner`);
       done();
     });
   });

@@ -10,6 +10,9 @@ TODO:
 - End-to-end tests
 - Transforms for functions to auto generate their args
 
+## Demo?
+
+[DEMO!](https://demo-ehefklufbm.now.sh/)
 
 ## Getting Started
 

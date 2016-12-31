@@ -7,13 +7,16 @@
     "babel-plugin-syntax-flow": "^6.18.0",
     "babel-plugin-transform-flow-comments": "^6.21.0",
     "babel-plugin-transform-flow-to-gen": "*",
+    "babel-plugin-transform-object-rest-spread": "^6.20.2",
     "babel-preset-es2015": "^6.18.0",
     "html-webpack-plugin": "^2.25.0",
+    "now": "^0.37.1",
     "webpack": "2.2.0-rc.3",
     "webpack-dev-server": "^1.16.2"
   },
   "scripts": {
-    "start": "webpack-dev-server --config webpack.config.js"
+    "start": "webpack-dev-server --config webpack.config.js",
+    "deploy": "now"
   },
   "babel": {
     "presets": [

@@ -49,3 +49,13 @@ const samples = testcheck.sample(personGen);
 //   "age": 1
 // }, ...]
 ```
+
+## Installing
+
+```js
+yarn add babel-transform-flow-to-gen
+```
+
+## License
+
+MIT

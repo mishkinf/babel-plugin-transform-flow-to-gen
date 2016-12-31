@@ -37,8 +37,9 @@ export default function (babel) {
       },
 
       ImportDeclaration(path) {
-        if (path.node.importKind === 'type') {
-          path.node.importKind = 'value';
+        if (path.node.importKind === `type`) {
+          // eslint-disable-next-line no-param-reassign
+          path.node.importKind = `value`;
         }
       },
 

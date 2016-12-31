@@ -96,7 +96,7 @@ export const generic = (fn, args = []) =>
 export const mock = () =>
   gen.bind(gen.undefined, () =>
     // use a jest mock if this is being run with jest
-    typeof jest === 'object' ? gen.return(jest.fn()) : gen.return(() => {})
+    (typeof jest === `object` ? gen.return(jest.fn()) : gen.return(() => {})),
   );
 
 export const empty = () =>

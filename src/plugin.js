@@ -36,6 +36,12 @@ export default function (babel) {
         }
       },
 
+      ImportDeclaration(path) {
+        if (path.node.importKind === 'type') {
+          path.node.importKind = 'value';
+        }
+      },
+
       ExportNamedDeclaration(path) {
         if (path.node.exportKind === `type`) {
           const {declaration} = path.node;

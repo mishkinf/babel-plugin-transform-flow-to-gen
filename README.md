@@ -1,14 +1,19 @@
 # Flow to gen
 
-_Transforms flow type aliases into testcheck.js generators_
+_Transforms flow type aliases into generators for property based testing_
 
 ## Motivation
 
-TODO:
+This Babel plugin attempts to alleviate frustration around creating and maintaining fixtures/mocks. Additionally, it provides a framework
+for automatically generating __random__ input for typed functions and React components. If you're unfamiliar with generative or property based
+testing, please check out an implementation of [Quickcheck](https://en.wikipedia.org/wiki/QuickCheck) in your language of choice.
+Also look at [testcheck.js](https://github.com/leebyron/testcheck-js) which is wrapped by the runtime of this library.
 
-- More tests
-- End-to-end tests
-- Transforms for functions to auto generate their args
+By running this Babel transform on your code:
+
+- all type aliases are transformed in testcheck.js generators
+- all typed functions can immediately retrieve randomly generated inputs (__TODO__)
+- all typed React components can immediately retrieve randomly generated props (__TODO__)
 
 ## Demo?
 
@@ -16,7 +21,10 @@ TODO:
 
 ## Getting Started
 
-This library transforms your type aliases into testcheck.js generators to make testing easier.
+`babel-plugin-transform-flow-to-gen` transforms your type aliases into functions
+that create testcheck.js generators.
+
+## Usage
 
 ```js
 import testcheck from 'testcheck';
@@ -57,7 +65,7 @@ const samples = testcheck.sample(personGen);
 ## Installing
 
 ```js
-yarn add babel-transform-flow-to-gen
+yarn add babel-plugin-transform-flow-to-gen
 ```
 
 ## License

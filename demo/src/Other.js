@@ -1,3 +1,4 @@
 export type Other = {
-  favoriteFood: string
+  favoriteFood: string,
+  isCool: ?boolean
 };

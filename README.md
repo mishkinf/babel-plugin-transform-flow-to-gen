@@ -19,7 +19,8 @@ TODO:
 This library transforms your type aliases into testcheck.js generators to make testing easier.
 
 ```js
-import testcheck, {gen} from 'testcheck';
+import testcheck from 'testcheck';
+import types from 'babel-plugin-transform-flow-to-gen/types';
 
 type Person<T> = {
   firstName: string,
@@ -27,7 +28,7 @@ type Person<T> = {
   age: T
 }
 
-const personGen = Person(gen.posInt);
+const personGen = Person(types.number());
 
 const samples = testcheck.sample(personGen);
 // returns on array of Person's

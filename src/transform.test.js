@@ -2,9 +2,8 @@ import * as babel from 'babel-core';
 import generate from 'babel-generator';
 import testcheck from 'testcheck';
 import transform from './transform';
-import GEN from './GEN';
-
-const gen = testcheck.gen;
+import GEN from './GEN_ID';
+import * as types from './types';
 
 function generateSample(fileName, args, callback) {
   // eslint-disable-next-line import/no-dynamic-require
@@ -14,7 +13,7 @@ function generateSample(fileName, args, callback) {
 
   let fn;
   // eslint-disable-next-line no-eval
-  eval(`var ${GEN} = gen; fn = ${code};`);
+  eval(`var ${GEN} = require('./types'); fn = ${code};`);
 
   const sample = testcheck.sample(fn(...args))[0];
   callback(sample);
@@ -29,10 +28,10 @@ describe(`transform`, () => {
   });
 
   it(`transforms an ast with generic inputs`, done => {
-    generateSample(`transform-02`, [gen.string], result1 => {
+    generateSample(`transform-02`, [types.string()], result1 => {
       expect(typeof result1.firstName).toEqual(`string`);
 
-      generateSample(`transform-02`, [gen.int], result2 => {
+      generateSample(`transform-02`, [types.number()], result2 => {
         expect(typeof result2.firstName).toEqual(`number`);
         done();
       });

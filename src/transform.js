@@ -1,10 +1,36 @@
-import GEN from './GEN';
+import GEN from './GEN_ID';
 
 export default function transform(babel, obj) {
   const {types: t} = babel;
 
   function typeToGen(params, obj) {
     switch (obj.type) {
+      case `generic`: {
+        let index = -1;
+        let i = 0;
+        const len = params.length;
+
+        while (i < len) {
+          if (params[i].name === obj.name) {
+            index = i;
+            break;
+          }
+
+          i += 1;
+        }
+
+        if (index === -1) {
+          // wrap in a gen.bind so that recursion is lazy
+          return babel.template(`${GEN}.generic(CALL, ARGS)`)({
+            CALL: t.identifier(obj.name),
+            ARGS: t.arrayExpression(
+              obj.args.map(a => createGen(params, a))
+            )
+          }).expression;
+        }
+
+        return t.identifier(obj.name);
+      }
       case `object`: {
         const keys = Object.keys(obj.members);
 
@@ -24,85 +50,43 @@ export default function transform(babel, obj) {
           VAL: createGen(params, obj.elementType),
         }).expression;
       }
+      case `numberliteral`:
       case `stringliteral`: {
-        return t.identifier(`${GEN}.return('${obj.value}')`);
+        return t.identifier(`${GEN}.literal(${JSON.stringify(obj.value)})`);
       }
       case `boolean`:
-        return t.identifier(`${GEN}.boolean`);
+        return t.identifier(`${GEN}.boolean()`);
       case `string`:
-        return t.identifier(`${GEN}.resize(20, ${GEN}.alphaNumString)`);
+        return t.identifier(`${GEN}.string()`);
       case `number`:
-        return t.identifier(`${GEN}.int`);
-      case `generic`: {
-        let index = -1;
-        let i = 0;
-        const len = params.length;
-
-        while (i < len) {
-          if (params[i].name === obj.name) {
-            index = i;
-            break;
-          }
-
-          i += 1;
-        }
-
-        if (index === -1) {
-          // wrap in a gen.bind so that recursion is lazy
-          return babel.template(`${GEN}.bind(${GEN}.undefined, () => WRAPPED)`)({
-            WRAPPED:
-              t.callExpression(
-                t.identifier(obj.name),
-                obj.args.map(a => createGen(params, a)),
-              )
-          }).expression;
-        }
-
-        return t.identifier(obj.name);
-      }
+        return t.identifier(`${GEN}.number()`);
       case `union`:
-        return babel.template(`${GEN}.oneOf(ARR)`)({
+        return babel.template(`${GEN}.union(ARR)`)({
           ARR: t.arrayExpression(
             obj.entries.map(val => createGen(params, val)),
           ),
         }).expression;
 
       case `intersection`:
-        return babel.template(`
-          ARR.reduce((interGen, typeGen) => {
-            return ${GEN}.bind(interGen, inter => {
-              return ${GEN}.map(type => {
-                return Object.assign({}, inter, type);
-              }, typeGen);
-            });
-          }, ${GEN}.return({}));
-        `)({
+        return babel.template(`${GEN}.intersection(ARR)`)({
           ARR: t.arrayExpression(
             obj.entries.map(val => createGen(params, val)),
           ),
         }).expression;
       case `tuple`:
-        return babel.template(`
-          ARR.reduce((interGen, typeGen) => {
-            return ${GEN}.bind(interGen, inter => {
-              return ${GEN}.map(type => {
-                return inter.concat(type);
-              }, typeGen);
-            });
-          }, ${GEN}.return([]));
-        `)({
+        return babel.template(`${GEN}.tuple(ARR)`)({
           ARR: t.arrayExpression(
             obj.entries.map(val => createGen(params, val)),
           ),
         }).expression;
       case `function`:
-        return t.identifier(`${GEN}.return(function(){})`);
+        return t.identifier(`${GEN}.noop()`);
       case `nullable`:
-        return babel.template(`${GEN}.oneOf([${GEN}.undefined, OBJ])`)({
+        return babel.template(`${GEN}.nullable(OBJ)`)({
           OBJ: createGen(params, obj.value),
         }).expression;
       default:
-        return t.identifier(`${GEN}.return({})`);
+        return t.identifier(`${GEN}.empty()`);
     }
   }
 
@@ -112,7 +96,7 @@ export default function transform(babel, obj) {
     // this isn`t totally correct.
     // key should optionally not be present as well.
     if (obj.optional === true) {
-      return babel.template(`${GEN}.oneOf([${GEN}.undefined, OBJ])`)({
+      return babel.template(`${GEN}.nullable(OBJ)`)({
         OBJ: gen,
       }).expression;
     }

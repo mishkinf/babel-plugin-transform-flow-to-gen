@@ -73,5 +73,10 @@
         "never"
       ]
     }
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "babel-plugin-transform-flow-to-gen/types": "<rootDir>/src/types.js"
+    }
   }
 }

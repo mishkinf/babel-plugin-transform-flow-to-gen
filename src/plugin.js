@@ -1,6 +1,6 @@
 import traverse from './traverse';
 import transform from './transform';
-import GEN from './GEN';
+import GEN from './GEN_ID';
 
 export default function (babel) {
   const {types: t} = babel;
@@ -31,7 +31,7 @@ export default function (babel) {
         }
 
         if (index > -1) {
-          const requireStatement = babel.template(`const ${GEN} = require('testcheck').gen;`)();
+          const requireStatement = babel.template(`const ${GEN} = require('babel-plugin-transform-flow-to-gen/types');`)();
           path.node.body.splice(index, 0, requireStatement);
         }
       },

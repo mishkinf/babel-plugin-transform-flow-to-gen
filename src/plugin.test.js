@@ -3,7 +3,7 @@ import * as babel from 'babel-core';
 import testcheck, {gen} from 'testcheck';
 import plugin from './plugin';
 
-describe(`babel plugin`, () => {
+describe(`plugin`, () => {
   it(``, () => {
     const filePath = path.join(__dirname, `__fixtures__`, `end-to-end-01.js`);
     const {code} = babel.transformFileSync(filePath, {

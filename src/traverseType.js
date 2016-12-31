@@ -69,7 +69,7 @@ function getType(path, optional = false) {
   }
 }
 
-export default function traverse(path) {
+export default function traverseType(path) {
   const {node} = path;
   const name = node.id.name;
   const type = getType(node.right);

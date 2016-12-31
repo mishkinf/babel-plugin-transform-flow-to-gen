@@ -1,6 +1,6 @@
 import GEN from './GEN_ID';
 
-export default function transform(babel, type) {
+export default function transformType(babel, type) {
   const {types: t} = babel;
 
   function typeToGen(params, obj) {

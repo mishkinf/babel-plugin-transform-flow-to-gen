@@ -1,14 +1,14 @@
 import * as babel from 'babel-core';
 import generate from 'babel-generator';
 import testcheck from 'testcheck';
-import transform from './transform';
+import transformType from './transformType';
 import GEN from './GEN_ID';
 import * as types from './types';
 
 function generateSample(fileName, args, callback) {
   // eslint-disable-next-line import/no-dynamic-require
   const ast = require(`./__fixtures__/${fileName}`);
-  const sourceAst = transform(babel, ast);
+  const sourceAst = transformType(babel, ast);
   const {code} = generate(sourceAst);
 
   let fn;
@@ -19,7 +19,7 @@ function generateSample(fileName, args, callback) {
   callback(sample);
 }
 
-describe(`transform`, () => {
+describe(`transformType`, () => {
   it(`transforms a simple ast`, done => {
     generateSample(`transform-01`, [], result => {
       expect(typeof result.firstName).toEqual(`string`);

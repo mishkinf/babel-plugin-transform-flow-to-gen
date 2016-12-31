@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import * as babylon from 'babylon';
 import babelTraverse from 'babel-traverse';
-import traverse from './traverse';
+import traverseType from './traverseType';
 
 function parseFixture(fileName, callback) {
   const file = path.join(__dirname, `__fixtures__`, `${fileName}.js`);
@@ -15,12 +15,12 @@ function parseFixture(fileName, callback) {
 
   babelTraverse(ast, {
     TypeAlias: p => {
-      callback(traverse(p));
+      callback(traverseType(p));
     },
   });
 }
 
-describe(`traverse`, () => {
+describe(`traverseType`, () => {
   it(`traverses simple types`, done => {
     parseFixture(`traverse-01`, result => {
       expect(result.name).toEqual(`Person`);

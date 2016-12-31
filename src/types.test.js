@@ -1,12 +1,12 @@
 import {sample} from 'testcheck';
-import types from './types';
+import * as types from './types';
 
-describe('types', () => {
-  describe('object', () => {
-    it('returns a generated object', () => {
+describe(`types`, () => {
+  describe(`object`, () => {
+    it(`returns a generated object`, () => {
       const gen = types.object({
         firstName: types.string(),
-        friends: types.array(types.object({}))
+        friends: types.array(types.object({})),
       });
 
       sample(gen).forEach(s => {
@@ -16,38 +16,38 @@ describe('types', () => {
       });
     });
 
-    it('throws when it does not receive an object', () => {
+    it(`throws when it does not receive an object`, () => {
       expect(() => {
-        types.object()
+        types.object();
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
     });
   });
 
-  describe('array', () => {
-    it('returns a generated array', () => {
+  describe(`array`, () => {
+    it(`returns a generated array`, () => {
       const gen = types.array(types.number());
 
       sample(gen).forEach(s => {
         expect(Array.isArray(s)).toBe(true);
-        s.forEach(i => expect(typeof i).toEqual('number'));
+        s.forEach(i => expect(typeof i).toEqual(`number`));
       });
     });
 
-    it('throws when it does not receive any argument', () => {
+    it(`throws when it does not receive any argument`, () => {
       expect(() => {
-        types.array()
+        types.array();
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
     });
   });
 
-  describe('literal', () => {
-    it('returns a generator that returns the exact value it is passed', () => {
+  describe(`literal`, () => {
+    it(`returns a generator that returns the exact value it is passed`, () => {
       const gen = types.literal({
         a: 1,
         b: 2,
         c: {
-          d: 3
-        }
+          d: 3,
+        },
       });
 
       sample(gen).forEach(s => {
@@ -57,127 +57,127 @@ describe('types', () => {
       });
     });
 
-    it('throws when it does not receive any argument', () => {
+    it(`throws when it does not receive any argument`, () => {
       expect(() => {
-        types.literal()
+        types.literal();
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
     });
   });
 
-  describe('boolean', () => {
-    it('returns a generated boolean', () => {
+  describe(`boolean`, () => {
+    it(`returns a generated boolean`, () => {
       const gen = types.boolean();
-      sample(gen).forEach(s => expect(typeof s).toEqual('boolean'))
+      sample(gen).forEach(s => expect(typeof s).toEqual(`boolean`));
     });
   });
 
-  describe('string', () => {
-    it('returns a generated alphanumeric string', () => {
+  describe(`string`, () => {
+    it(`returns a generated alphanumeric string`, () => {
       const gen = types.string();
-      sample(gen).forEach(s => expect(typeof s).toEqual('string'))
+      sample(gen).forEach(s => expect(typeof s).toEqual(`string`));
     });
   });
 
-  describe('union', () => {
-    it('returns a generated union type', () => {
-      const gen = types.union([types.literal('a'), types.literal('b')]);
+  describe(`union`, () => {
+    it(`returns a generated union type`, () => {
+      const gen = types.union([types.literal(`a`), types.literal(`b`)]);
 
       sample(gen).forEach(s =>
-        expect(s === 'a' || s === 'b').toBeTruthy()
+        expect(s === `a` || s === `b`).toBeTruthy(),
       );
     });
 
-    it('throws when it does not receive an array', () => {
+    it(`throws when it does not receive an array`, () => {
       expect(() => {
-        types.union()
+        types.union();
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
 
       expect(() => {
-        types.union(types.literal('a'), types.literal('b'))
+        types.union(types.literal(`a`), types.literal(`b`));
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
     });
   });
 
-  describe('intersection', () => {
-    it('returns a generated intersection of many types', () => {
+  describe(`intersection`, () => {
+    it(`returns a generated intersection of many types`, () => {
       const gen = types.intersection([
         types.object({a: types.string(), b: types.string()}),
-        types.object({c: types.number(), d: types.boolean()})
+        types.object({c: types.number(), d: types.boolean()}),
       ]);
 
       sample(gen).forEach(s => {
-        expect(typeof s.a).toEqual('string');
-        expect(typeof s.b).toEqual('string');
-        expect(typeof s.c).toEqual('number');
-        expect(typeof s.d).toEqual('boolean');
+        expect(typeof s.a).toEqual(`string`);
+        expect(typeof s.b).toEqual(`string`);
+        expect(typeof s.c).toEqual(`number`);
+        expect(typeof s.d).toEqual(`boolean`);
       });
     });
 
-    it('throws when it does not receive an array', () => {
+    it(`throws when it does not receive an array`, () => {
       expect(() => {
-        types.intersection()
+        types.intersection();
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
 
       expect(() => {
         types.intersection(
           types.object({a: types.string(), b: types.string()}),
-          types.object({c: types.number(), d: types.boolean()})
+          types.object({c: types.number(), d: types.boolean()}),
         );
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
     });
   });
 
-  describe('tuple', () => {
-    it('returns a generated tuple of types', () => {
+  describe(`tuple`, () => {
+    it(`returns a generated tuple of types`, () => {
       const gen = types.tuple([
         types.object({a: types.string(), b: types.string()}),
-        types.object({c: types.number(), d: types.boolean()})
+        types.object({c: types.number(), d: types.boolean()}),
       ]);
 
       sample(gen).forEach(s => {
-        expect(typeof s[0].a).toEqual('string');
-        expect(typeof s[0].b).toEqual('string');
-        expect(typeof s[1].c).toEqual('number');
-        expect(typeof s[1].d).toEqual('boolean');
+        expect(typeof s[0].a).toEqual(`string`);
+        expect(typeof s[0].b).toEqual(`string`);
+        expect(typeof s[1].c).toEqual(`number`);
+        expect(typeof s[1].d).toEqual(`boolean`);
       });
     });
 
-    it('throws when it does not receive an array', () => {
+    it(`throws when it does not receive an array`, () => {
       expect(() => {
-        types.tuple()
+        types.tuple();
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
 
       expect(() => {
         types.tuple(
           types.object({a: types.string(), b: types.string()}),
-          types.object({c: types.number(), d: types.boolean()})
+          types.object({c: types.number(), d: types.boolean()}),
         );
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
     });
   });
 
-  describe('nullable', () => {
-    it('returns a generated maybe type of a type', () => {
+  describe(`nullable`, () => {
+    it(`returns a generated maybe type of a type`, () => {
       const gen = types.nullable(types.string());
       const samp = sample(gen);
 
-      const undefs = samp.filter(a => typeof a === 'undefined').length;
-      const strings = samp.filter(a => typeof a === 'string').length;
+      const undefs = samp.filter(a => typeof a === `undefined`).length;
+      const strings = samp.filter(a => typeof a === `string`).length;
 
       expect(undefs).toBeGreaterThan(0);
       expect(strings).toBeGreaterThan(0);
       expect(undefs + strings).toEqual(samp.length);
     });
 
-    it('throws when it does not receive a type', () => {
+    it(`throws when it does not receive a type`, () => {
       expect(() => {
-        types.nullable()
+        types.nullable();
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
     });
   });
 
-  describe('generic', () => {
-    it('lazily wraps a function that returns a generator', () => {
+  describe(`generic`, () => {
+    it(`lazily wraps a function that returns a generator`, () => {
       const mock = jest.fn(() => types.string());
 
       const gen = types.generic(mock, []);
@@ -187,7 +187,7 @@ describe('types', () => {
       const samp = sample(gen);
 
       samp.forEach(s => {
-        expect(typeof s).toEqual('string');
+        expect(typeof s).toEqual(`string`);
       });
 
       expect(mock).toHaveBeenCalledTimes(samp.length);

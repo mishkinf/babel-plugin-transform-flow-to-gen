@@ -1,6 +1,6 @@
 import GEN from './GEN_ID';
 
-export default function transform(babel, obj) {
+export default function transform(babel, type) {
   const {types: t} = babel;
 
   function typeToGen(params, obj) {
@@ -24,8 +24,8 @@ export default function transform(babel, obj) {
           return babel.template(`${GEN}.generic(CALL, ARGS)`)({
             CALL: t.identifier(obj.name),
             ARGS: t.arrayExpression(
-              obj.args.map(a => createGen(params, a))
-            )
+              obj.args.map(a => createGen(params, a)),
+            ),
           }).expression;
         }
 
@@ -120,8 +120,8 @@ export default function transform(babel, obj) {
   return babel.template(`
   function NAME() {PARAMS; return GEN;}
   `)({
-    NAME: t.identifier(obj.name),
-    PARAMS: createParams(obj.params),
-    GEN: createGen(obj.params, obj.type),
+    NAME: t.identifier(type.name),
+    PARAMS: createParams(type.params),
+    GEN: createGen(type.params, type.type),
   });
 }

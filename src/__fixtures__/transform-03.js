@@ -6,12 +6,12 @@ module.exports = {
     optional: false,
     members: {
       friends: {
-        type: 'array',
+        type: `array`,
         elementType: {
           type: `generic`,
           name: `Person`,
           optional: false,
-          args: []
+          args: [],
         },
         optional: false,
       },

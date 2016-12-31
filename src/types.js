@@ -1,16 +1,17 @@
 import {gen} from 'testcheck';
 
-const error = msg =>
+const error = msg => {
   throw new Error(`babel-plugin-transform-flow-to-gen/types: ${msg}`);
+};
 
-const isUndefined = obj => typeof obj === 'undefined';
+const isUndefined = obj => typeof obj === `undefined`;
 
 const isObject = obj =>
-  !Array.isArray(obj) && typeof obj === 'object';
+  !Array.isArray(obj) && typeof obj === `object`;
 
 export const object = shape => {
   if (!isObject(shape)) {
-    error(`types.object did not receive object as it's argument.`)
+    error(`types.object did not receive object as it's argument.`);
   }
 
   return gen.object(shape);
@@ -54,13 +55,11 @@ export const intersection = arr => {
     error(`types.intersection expected array as argument.`);
   }
 
-  return arr.reduce((interGen, typeGen) => {
-    return gen.bind(interGen, inter => {
-      return gen.map(type => {
-        return Object.assign({}, inter, type);
-      }, typeGen);
-    });
-  }, gen.return({}));
+  return arr.reduce((interGen, typeGen) =>
+    gen.bind(interGen, inter =>
+      gen.map(type => Object.assign({}, inter, type), typeGen),
+    ), gen.return({}),
+  );
 };
 
 export const tuple = arr => {
@@ -68,13 +67,11 @@ export const tuple = arr => {
     error(`types.tuple expected array as argument.`);
   }
 
-  return arr.reduce((interGen, typeGen) => {
-    return gen.bind(interGen, inter => {
-      return gen.map(type => {
-        return inter.concat(type);
-      }, typeGen);
-    });
-  }, gen.return([]));
+  return arr.reduce((interGen, typeGen) =>
+    gen.bind(interGen, inter =>
+      gen.map(type => inter.concat(type), typeGen),
+    ), gen.return([]),
+  );
 };
 
 export const nullable = type => {
@@ -83,11 +80,11 @@ export const nullable = type => {
   }
 
   return gen.oneOf([gen.undefined, type]);
-}
+};
 
 export const generic = (fn, args = []) =>
   gen.bind(gen.undefined, () => {
-    const result = fn.apply(null, args);
+    const result = fn(...args);
 
     if (isUndefined(result)) {
       error(`types.generic function returned undefined`);
@@ -97,23 +94,7 @@ export const generic = (fn, args = []) =>
   });
 
 export const noop = () =>
-  gen.return(function(){});
+  gen.return(() => {});
 
 export const empty = () =>
   gen.return({});
-
-export default {
-  object,
-  array,
-  literal,
-  boolean,
-  string,
-  number,
-  union,
-  intersection,
-  tuple,
-  nullable,
-  generic,
-  noop,
-  empty
-};

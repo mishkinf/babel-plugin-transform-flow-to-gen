@@ -4,7 +4,7 @@ import testcheck, {gen} from 'testcheck';
 import plugin from './plugin';
 
 describe(`plugin`, () => {
-  it(``, () => {
+  it(`kindasorta makes sure that the babel plugin works`, () => {
     const filePath = path.join(__dirname, `__fixtures__`, `end-to-end-01.js`);
     const {code} = babel.transformFileSync(filePath, {
       sourceType: `module`,

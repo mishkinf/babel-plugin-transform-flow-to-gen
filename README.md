@@ -17,7 +17,7 @@ By running this Babel transform on your code:
 
 TODO:
 - Generics for functions
-- Flow "Magic" types
+- Flow "Magic" types + other types (boolean literal, void, etc).
 - React components
 
 ## Demo?

@@ -12,8 +12,6 @@ function pluginTransform(fileName, exported) {
     plugins: [`syntax-flow`, plugin, `transform-flow-comments`],
   });
 
-  console.log(code)
-
   // hacky way to confirm that plugin is working
   // eslint-disable-next-line no-eval
   eval(code);
@@ -71,6 +69,25 @@ describe(`plugin`, () => {
       expect(newPerson).not.toEqual(person);
       expect(newPerson.name).toEqual(name);
       expect(typeof newPerson.other.eyeColor).toEqual('string');
+    });
+  });
+
+  it(`kindasorta makes sure that the babel plugin works on functions with callbacks`, () => {
+    const setNameThenCallback = pluginTransform(`end-to-end-04`, `setNameThenCallback`);
+
+    sample(setNameThenCallback[GEN]).forEach(args => {
+      const [person, name, fn] = args;
+
+      // returns a jest mock
+      expect(fn).toHaveBeenCalledTimes(0);
+
+      const newPerson = setNameThenCallback(person, name, fn);
+
+      expect(fn).toHaveBeenCalledTimes(1);
+      expect(fn.mock.calls[0][0]).toEqual({
+        ...person,
+        name
+      });
     });
   });
 });

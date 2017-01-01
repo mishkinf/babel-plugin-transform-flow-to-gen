@@ -12,6 +12,8 @@ function pluginTransform(fileName, exported) {
     plugins: [`syntax-flow`, plugin, `transform-flow-comments`],
   });
 
+  console.log(code)
+
   // hacky way to confirm that plugin is working
   // eslint-disable-next-line no-eval
   eval(code);
@@ -51,11 +53,24 @@ describe(`plugin`, () => {
     });
   });
 
-  it.only(`kindasorta makes sure that the babel plugin works on functions`, () => {
+  it(`kindasorta makes sure that the babel plugin works on functions`, () => {
     const fn = pluginTransform(`end-to-end-02`, `exported`);
 
     sample(fn[GEN]).forEach(args => {
       expect(fn(...args)).toEqual(args[0] + args[1]);
+    });
+  });
+
+  it(`kindasorta makes sure that the babel plugin works on functions with type aliases`, () => {
+    const setName = pluginTransform(`end-to-end-03`, `setName`);
+
+    sample(setName[GEN]).forEach(args => {
+      const [person, name] = args;
+      const newPerson = setName(person, name);
+
+      expect(newPerson).not.toEqual(person);
+      expect(newPerson.name).toEqual(name);
+      expect(typeof newPerson.other.eyeColor).toEqual('string');
     });
   });
 });

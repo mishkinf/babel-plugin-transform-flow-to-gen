@@ -1,5 +1,6 @@
 import traverseType from './traverseType';
 import transformType from './transformType';
+import transformFunction from './transformFunction';
 import GEN from './GEN_ID';
 
 export default function (babel) {
@@ -16,13 +17,8 @@ export default function (babel) {
 
         while (i < len) {
           const statement = path.node.body[i];
-          const isTypeAlias = t.isTypeAlias(statement);
-          const isTypeAliasExport = (
-            t.isExportNamedDeclaration(statement) &&
-            t.isTypeAlias(statement.declaration)
-          );
 
-          if (isTypeAlias || isTypeAliasExport) {
+          if (!t.isImportDeclaration(statement)) {
             index = i;
             break;
           }
@@ -30,10 +26,10 @@ export default function (babel) {
           i += 1;
         }
 
-        if (index > -1) {
-          const requireStatement = babel.template(`const ${GEN} = require('babel-plugin-transform-flow-to-gen/types');`)();
-          path.node.body.splice(index, 0, requireStatement);
-        }
+        index = (index > -1) ? index : len;
+
+        const requireStatement = babel.template(`const ${GEN} = require('babel-plugin-transform-flow-to-gen/types');`)();
+        path.node.body.splice(index, 0, requireStatement);
       },
 
       ImportDeclaration(path) {
@@ -61,9 +57,14 @@ export default function (babel) {
       },
 
       TypeAlias(path) {
-        const ast = transformType(babel, traverseType(path));
+        const ast = transformType(traverseType(path));
         path.replaceWithMultiple(ast);
       },
+
+      FunctionDeclaration: transformFunction,
+      FunctionExpression: transformFunction,
+      ArrowFunctionExpression: transformFunction,
+      ExpressionStatement: transformFunction
     },
   };
 }

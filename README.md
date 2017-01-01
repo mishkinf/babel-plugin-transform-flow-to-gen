@@ -12,7 +12,7 @@ typed functions and React components. If you're unfamiliar with generative or pr
 
 By running this Babel transform on your code:
 - all type aliases are transformed in testcheck.js generators
-- all typed functions can immediately retrieve randomly generated inputs (__TODO__)
+- all typed functions can immediately retrieve randomly generated inputs
 - all typed React components can immediately retrieve randomly generated props (__TODO__)
 
 ## Demo?
@@ -38,8 +38,8 @@ type Person<T> = {
 
 const personGen = Person(types.number());
 
-const samples = testcheck.sample(personGen);
-// returns on array of Person's
+testcheck.sample(personGen);
+// returns an array of Person's
 // [{
 //   "firstName": "9OY3o",
 //   "lastName": "fB",
@@ -60,6 +60,20 @@ const samples = testcheck.sample(personGen);
 //   "lastName": "",
 //   "age": 1
 // }, ...]
+
+function setFirstName(person: Person<number>, firstName: string) {
+  // ...
+}
+
+testcheck.sample(setFirstName.$GEN);
+// returns an array of args for setFirstName
+// [
+//  [{
+//   "firstName": "3o",
+//   "lastName": "j467DA",
+//   "age": 0
+//   }, "f02j"]
+// , ...]
 ```
 
 ## Installing

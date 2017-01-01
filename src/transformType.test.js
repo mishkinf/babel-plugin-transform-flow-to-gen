@@ -1,4 +1,3 @@
-import * as babel from 'babel-core';
 import generate from 'babel-generator';
 import testcheck from 'testcheck';
 import transformType from './transformType';
@@ -8,7 +7,7 @@ import * as types from './types';
 function generateSample(fileName, args, callback) {
   // eslint-disable-next-line import/no-dynamic-require
   const ast = require(`./__fixtures__/${fileName}`);
-  const sourceAst = transformType(babel, ast);
+  const sourceAst = transformType(ast);
   const {code} = generate(sourceAst);
 
   let fn;

@@ -1,29 +1,37 @@
 import path from 'path';
 import * as babel from 'babel-core';
-import testcheck, {gen} from 'testcheck';
+import {sample} from 'testcheck';
 import plugin from './plugin';
+import * as types from './types';
+import GEN from './GEN_ID';
+
+function pluginTransform(fileName, exported) {
+  const filePath = path.join(__dirname, `__fixtures__`, `${fileName}.js`);
+  const {code} = babel.transformFileSync(filePath, {
+    sourceType: `module`,
+    plugins: [`syntax-flow`, plugin, `transform-flow-comments`],
+  });
+
+  // hacky way to confirm that plugin is working
+  // eslint-disable-next-line no-eval
+  eval(code);
+  const fn = exports[exported];
+  delete exports[exported];
+
+  return fn;
+}
 
 describe(`plugin`, () => {
-  it(`kindasorta makes sure that the babel plugin works`, () => {
-    const filePath = path.join(__dirname, `__fixtures__`, `end-to-end-01.js`);
-    const {code} = babel.transformFileSync(filePath, {
-      sourceType: `module`,
-      plugins: [`syntax-flow`, plugin],
-    });
+  it(`kindasorta makes sure that the babel plugin works on types`, () => {
+    const Worker = pluginTransform(`end-to-end-01`, `Worker`);
 
-    // hacky way to confirm that plugin is working
-    // eslint-disable-next-line no-eval
-    eval(code);
-    const {Worker} = exports;
-    delete exports.Worker;
-
-    const T = gen.object({
-      stuff: gen.boolean,
+    const T = types.object({
+      stuff: types.boolean(),
     });
 
     const workerGen = Worker(T);
 
-    testcheck.sample(workerGen).forEach(worker => {
+    sample(workerGen).forEach(worker => {
       expect(typeof worker.firstName).toEqual(`string`);
 
       if (worker.lastName === `` || worker.lastName) {
@@ -40,6 +48,14 @@ describe(`plugin`, () => {
       expect(worker.update()).toEqual(undefined);
       expect(typeof worker.jobTitle).toEqual(`string`);
       expect(typeof worker.other.stuff).toEqual(`boolean`);
+    });
+  });
+
+  it.only(`kindasorta makes sure that the babel plugin works on functions`, () => {
+    const fn = pluginTransform(`end-to-end-02`, `exported`);
+
+    sample(fn[GEN]).forEach(args => {
+      expect(fn(...args)).toEqual(args[0] + args[1]);
     });
   });
 });

@@ -48,7 +48,9 @@ export default function transformFunction(path) {
       0,
       babel.template(`${name}.${GEN} = ${GEN}.tuple(ARR)`)({
         ARR: t.arrayExpression(
-          params.map(p => createGenFromAST(createTypeAST(p.typeAnnotation.typeAnnotation)), [])
+          params
+            .map(p => createTypeAST(p.typeAnnotation.typeAnnotation))
+            .map(type => createGenFromAST(type, []))
         )
       })
     );

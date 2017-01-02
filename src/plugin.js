@@ -1,4 +1,3 @@
-import traverseType from './traverseType';
 import transformType from './transformType';
 import transformFunction from './transformFunction';
 import GEN from './GEN_ID';
@@ -57,7 +56,8 @@ export default function (babel) {
       },
 
       TypeAlias(path) {
-        const ast = transformType(traverseType(path));
+        const {node} = path;
+        const ast = transformType(node.id.name, node.right, node.typeParameters);
         path.replaceWithMultiple(ast);
       },
 

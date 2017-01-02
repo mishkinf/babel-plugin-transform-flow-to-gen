@@ -1,8 +1,19 @@
 import * as babel from 'babel-core';
 import GEN from './GEN_ID';
 import createGenFromAST from './createGenFromAST';
+import createTypeAST from './createTypeAST';
 
 const {types: t} = babel;
+
+function typeParams(path) {
+  if (path && path.params) {
+    return path.params.map(param => ({
+      name: param.name
+    }));
+  }
+
+  return [];
+}
 
 function createParams(params) {
   if (params.length === 0) {
@@ -17,12 +28,15 @@ function createParams(params) {
   ]);
 }
 
-export default function transformType(type) {
+export default function transformType(name, typeAnnotation, typeParameters) {
+  const type = createTypeAST(typeAnnotation);
+  const params = typeParams(typeParameters);
+
   return babel.template(`
   function NAME() {PARAMS; return GEN;}
   `)({
-    NAME: t.identifier(type.name),
-    PARAMS: createParams(type.params),
-    GEN: createGenFromAST(type.type, type.params),
+    NAME: t.identifier(name),
+    PARAMS: createParams(params),
+    GEN: createGenFromAST(type, params),
   });
 }

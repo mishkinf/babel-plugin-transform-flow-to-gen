@@ -16,7 +16,6 @@ By running this Babel transform on your code:
 - all typed React components can immediately retrieve randomly generated props
 
 TODO:
-- Generics for functions
 - Flow "Magic" types + other types (boolean literal, void, etc).
 - React components
 

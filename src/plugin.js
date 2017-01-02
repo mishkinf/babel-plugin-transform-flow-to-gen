@@ -5,6 +5,22 @@ import GEN from './GEN_ID';
 export default function (babel) {
   const {types: t} = babel;
 
+  const allParamsAreTyped = path => !!(
+    path.params &&
+    path.params.length > 0 &&
+    path.params.every(p => !!p.typeAnnotation)
+  );
+
+  const walkToRoot = path => {
+    while (!t.isProgram(path.parentPath)) {
+      path = path.parentPath;
+    }
+
+    return path;
+  };
+
+  let funcExpressionCounter = 0;
+
   return {
     inherits: require(`babel-plugin-syntax-flow`),
 
@@ -61,10 +77,35 @@ export default function (babel) {
         path.replaceWithMultiple(ast);
       },
 
-      FunctionDeclaration: transformFunction,
-      FunctionExpression: transformFunction,
-      ArrowFunctionExpression: transformFunction,
-      ExpressionStatement: transformFunction
+      FunctionDeclaration(path) {
+        const root = walkToRoot(path);
+
+        if (allParamsAreTyped(path.node)) {
+          const name = path.node.id.name;
+          const fn = transformFunction(name, path.node.params, path.node.typeParameters);
+          root.insertAfter(fn);
+        }
+      },
+
+      FunctionExpression(path) {
+        const root = walkToRoot(path);
+
+        if (allParamsAreTyped(path.node)) {
+          const name = path.node.id = t.identifier(`${GEN}__${funcExpressionCounter++}`);
+          const fn = transformFunction(name, path.node.params, path.node.typeParameters);
+          root.insertAfter(fn);
+        }
+      },
+
+      ArrowFunctionExpression(path) {
+        const root = walkToRoot(path);
+
+        if (allParamsAreTyped(path.node) && !t.isCallExpression(path.parentPath)) {
+          const name = path.parentPath.node.id.name;
+          const fn = transformFunction(name, path.node.params, path.node.typeParameters);
+          root.insertAfter(fn);
+        }
+      }
     },
   };
 }

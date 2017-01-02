@@ -46,13 +46,18 @@ describe('babel-plugin-transform-flow-to-gen', () => {
   });
 
   it(`works with simple function types`, () => {
-    const {concat, setName, setNameThenCallback} = loadFixture(`simple-functions`);
+    const {
+      concat,
+      setName,
+      setNameThenCallback,
+      setNameWithGeneric
+    } = loadFixture(`simple-functions`);
 
-    sample(concat.$GEN).forEach(args => {
+    sample(concat.$GEN()).forEach(args => {
       expect(concat(...args)).toEqual(args[0] + args[1]);
     });
 
-    sample(setName.$GEN).forEach(args => {
+    sample(setName.$GEN()).forEach(args => {
       const [person, name] = args;
       const newPerson = setName(person, name);
 
@@ -61,7 +66,7 @@ describe('babel-plugin-transform-flow-to-gen', () => {
       expect(typeof newPerson.other.eyeColor).toEqual('string');
     });
 
-    sample(setNameThenCallback.$GEN).forEach(args => {
+    sample(setNameThenCallback.$GEN()).forEach(args => {
       const [person, name, fn] = args;
 
       // returns a jest mock
@@ -74,6 +79,14 @@ describe('babel-plugin-transform-flow-to-gen', () => {
         ...person,
         name
       });
+    });
+
+    sample(setNameWithGeneric.$GEN(types.number())).forEach(args => {
+      const [person] = args;
+
+      expectType(person.name, 'string');
+      expectType(person.age, 'number');
+      expectType(person.other, 'number');
     });
   });
 });

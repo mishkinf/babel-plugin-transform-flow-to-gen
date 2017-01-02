@@ -27,3 +27,10 @@ export function setNameThenCallback(person: Person<Misc>, name: string, callback
 
   callback(newPerson);
 }
+
+export function setNameWithGeneric<T>(person: Person<T>, name: string) {
+  return {
+    ...person,
+    name
+  };
+}

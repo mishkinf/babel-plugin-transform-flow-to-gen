@@ -70,7 +70,7 @@ function setFirstName(person: Person<number>, firstName: string) {
   // ...
 }
 
-testcheck.sample(setFirstName.$GEN);
+testcheck.sample(setFirstName.$GEN());
 // returns an array of args for setFirstName
 // [
 //  [{

@@ -32,9 +32,7 @@ export default function transformType(name, typeAnnotation, typeParameters) {
   const type = createTypeAST(typeAnnotation);
   const params = typeParams(typeParameters);
 
-  return babel.template(`
-  function NAME() {PARAMS; return GEN;}
-  `)({
+  return babel.template(`function NAME() {PARAMS; return GEN;}`)({
     NAME: t.identifier(name),
     PARAMS: createParams(params),
     GEN: createGenFromAST(type, params),

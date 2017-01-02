@@ -2,7 +2,7 @@ import * as babel from 'babel-core';
 import generate from "babel-generator";
 import createTypeAST from './createTypeAST';
 import createGenFromAST from './createGenFromAST';
-import transformType from './transformType';
+import transform from './transform';
 import GEN from './GEN_ID';
 
 const { types: t } = babel;
@@ -14,9 +14,7 @@ export default function transformFunction(name, funcParams = [], typeParameters)
 
   const fnName = `${GEN}__${name}`;
 
-  const fn = transformType(fnName, args, typeParameters);
-
-  console.log(generate(fn).code);
+  const fn = transform(fnName, args, typeParameters);
 
   return babel.template(`FUNC; ${name}.${GEN} = ${fnName};`)({
     FUNC: fn

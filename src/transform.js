@@ -5,6 +5,10 @@ import createTypeAST from './createTypeAST';
 
 const {types: t} = babel;
 
+const requireStatement = babel.template(
+  `const ${GEN} = require('babel-plugin-transform-flow-to-gen/types');`
+)();
+
 function typeParams(path) {
   if (path && path.params) {
     return path.params.map(param => ({
@@ -20,7 +24,7 @@ function createParams(params) {
     return null;
   }
 
-  return t.variableDeclaration(`const`, [
+  return t.variableDeclaration(`var`, [
     t.variableDeclarator(
       t.arrayPattern(params.map(p => t.identifier(p.name))),
       t.identifier(`Array.prototype.slice.call(arguments)`),
@@ -28,12 +32,13 @@ function createParams(params) {
   ]);
 }
 
-export default function transformType(name, typeAnnotation, typeParameters) {
+export default function transform(name, typeAnnotation, typeParameters) {
   const type = createTypeAST(typeAnnotation);
   const params = typeParams(typeParameters);
 
-  return babel.template(`function NAME() {PARAMS; return GEN;}`)({
+  return babel.template(`function NAME() {REQUIRE; PARAMS; return GEN;}`)({
     NAME: t.identifier(name),
+    REQUIRE: requireStatement,
     PARAMS: createParams(params),
     GEN: createGenFromAST(type, params),
   });

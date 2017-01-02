@@ -1,4 +1,4 @@
-import transformType from './transformType';
+import transform from './transform';
 import transformFunction from './transformFunction';
 import GEN from './GEN_ID';
 
@@ -25,28 +25,6 @@ export default function (babel) {
     inherits: require(`babel-plugin-syntax-flow`),
 
     visitor: {
-      Program(path) {
-        const len = path.node.body.length;
-        let index = -1;
-        let i = 0;
-
-        while (i < len) {
-          const statement = path.node.body[i];
-
-          if (!t.isImportDeclaration(statement)) {
-            index = i;
-            break;
-          }
-
-          i += 1;
-        }
-
-        index = (index > -1) ? index : len;
-
-        const requireStatement = babel.template(`const ${GEN} = require('babel-plugin-transform-flow-to-gen/types');`)();
-        path.node.body.splice(index, 0, requireStatement);
-      },
-
       ImportDeclaration(path) {
         if (path.node.importKind === `type`) {
           // eslint-disable-next-line no-param-reassign
@@ -73,7 +51,7 @@ export default function (babel) {
 
       TypeAlias(path) {
         const {node} = path;
-        const ast = transformType(node.id.name, node.right, node.typeParameters);
+        const ast = transform(node.id.name, node.right, node.typeParameters);
         path.replaceWithMultiple(ast);
       },
 

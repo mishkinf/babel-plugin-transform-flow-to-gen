@@ -50,6 +50,7 @@ function typeToGen(obj, params = []) {
         VAL: createGenFromAST(obj.elementType, params),
       }).expression;
     }
+    case `booleanliteral`:
     case `numberliteral`:
     case `stringliteral`: {
       return t.identifier(`${GEN}.literal(${JSON.stringify(obj.value)})`);

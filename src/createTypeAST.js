@@ -31,6 +31,8 @@ export default function createTypeAST(path, optional = false) {
       const elementType = createTypeAST(path.elementType);
       return {...base, elementType};
     }
+    case `booleanliteral`:
+    case `numberliteral`:
     case `stringliteral`: {
       const value = path.value;
       return {...base, value};

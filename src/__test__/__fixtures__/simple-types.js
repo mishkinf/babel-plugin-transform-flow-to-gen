@@ -22,6 +22,7 @@ export type Person = {
   lastName: ?string,
   age: Age,
   isCool: boolean,
+  isMonster: false,
   misc: Misc,
   favoriteFoods: Food[],
   update: (p: Person) => Person

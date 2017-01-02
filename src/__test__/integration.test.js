@@ -11,7 +11,9 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
       expectType(person.lastName, `string`, true);
       expectType(person.age, `number`);
       expectType(person.isCool, `boolean`);
+      expectType(person.isMonster, `boolean`);
 
+      expect(person.isMonster).toEqual(false);
       expect([`blue`, `brown`, `green`]).toContain(person.misc.eyeColor);
       expect([`blonde`, `brown`, `red`]).toContain(person.misc.hairColor);
 

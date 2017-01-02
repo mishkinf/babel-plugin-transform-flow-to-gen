@@ -6,13 +6,13 @@ import createTypeAST from './createTypeAST';
 const {types: t} = babel;
 
 const requireStatement = babel.template(
-  `var ${GEN} = require('babel-plugin-transform-flow-to-gen/types');`
+  `var ${GEN} = require('babel-plugin-transform-flow-to-gen/types');`,
 )();
 
 function typeParams(path) {
   if (path && path.params) {
     return path.params.map(param => ({
-      name: param.name
+      name: param.name,
     }));
   }
 

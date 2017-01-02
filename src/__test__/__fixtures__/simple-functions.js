@@ -15,14 +15,18 @@ export function concat(a: string, b: string) {
 export function setName(person: Person<Misc>, name: string) {
   return {
     ...person,
-    name
+    name,
   };
 }
 
-export function setNameThenCallback(person: Person<Misc>, name: string, callback: (p: Person) => void): void {
+export function setNameThenCallback(
+  person: Person<Misc>,
+  name: string,
+  callback: (p: Person) => void,
+): void {
   const newPerson = {
     ...person,
-    name
+    name,
   };
 
   callback(newPerson);
@@ -31,6 +35,6 @@ export function setNameThenCallback(person: Person<Misc>, name: string, callback
 export function setNameWithGeneric<T>(person: Person<T>, name: string) {
   return {
     ...person,
-    name
+    name,
   };
 }

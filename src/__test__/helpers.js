@@ -10,8 +10,8 @@ export function loadFixture(fileName) {
   });
 
   // hacky way to confirm that plugin is working
-  // eslint-disable-next-line no-eval
   let result;
+  // eslint-disable-next-line no-eval
   eval(`exports = {}; ${code}; result = exports; exports = {};`);
 
   return result;
@@ -19,7 +19,8 @@ export function loadFixture(fileName) {
 
 export function expectType(value, type, nullable = false) {
   expect(
+    // eslint-disable-next-line valid-typeof
     (typeof value === type) ||
-    (nullable && (value === null))
+    (nullable && (value === null)),
   ).toBeTruthy();
 }

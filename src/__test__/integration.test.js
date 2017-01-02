@@ -1,67 +1,67 @@
 import {sample} from 'testcheck';
+import * as types from '../typeHelpers';
 import {loadFixture, expectType} from './helpers';
-import * as types from 'babel-plugin-transform-flow-to-gen/types';
 
-describe('babel-plugin-transform-flow-to-gen', () => {
+describe(`babel-plugin-transform-flow-to-gen`, () => {
   it(`works with simple types`, () => {
     const {Person, Job, Worker} = loadFixture(`simple-types`);
 
     sample(Person.$GEN()).forEach(person => {
-      expectType(person.firstName, 'string');
-      expectType(person.lastName, 'string', true);
-      expectType(person.age, 'number');
-      expectType(person.isCool, 'boolean');
+      expectType(person.firstName, `string`);
+      expectType(person.lastName, `string`, true);
+      expectType(person.age, `number`);
+      expectType(person.isCool, `boolean`);
 
-      expect(['blue', 'brown', 'green']).toContain(person.misc.eyeColor);
-      expect(['blonde', 'brown', 'red']).toContain(person.misc.hairColor);
+      expect([`blue`, `brown`, `green`]).toContain(person.misc.eyeColor);
+      expect([`blonde`, `brown`, `red`]).toContain(person.misc.hairColor);
 
       expect(Array.isArray(person.favoriteFoods)).toBeTruthy();
 
       person.favoriteFoods.forEach(food => {
-        expect(['pizza', 'ice cream', 'tacos']).toContain(food);
+        expect([`pizza`, `ice cream`, `tacos`]).toContain(food);
       });
     });
 
     const other = types.object({
       a: types.string(),
-      b: types.boolean()
+      b: types.boolean(),
     });
 
     sample(Job.$GEN(other)).forEach(job => {
-      expectType(job.jobTitle, 'string');
-      expectType(job.other, 'object');
-      expectType(job.other.a, 'string');
-      expectType(job.other.b, 'boolean');
+      expectType(job.jobTitle, `string`);
+      expectType(job.other, `object`);
+      expectType(job.other.a, `string`);
+      expectType(job.other.b, `boolean`);
     });
 
     sample(Job.$GEN(types.string())).forEach(job => {
-      expectType(job.other, 'string');
+      expectType(job.other, `string`);
     });
 
     sample(Worker.$GEN(other)).forEach(worker => {
-      expectType(worker.firstName, 'string');
-      expectType(worker.jobTitle, 'string');
-      expectType(worker.other.a, 'string');
+      expectType(worker.firstName, `string`);
+      expectType(worker.jobTitle, `string`);
+      expectType(worker.other.a, `string`);
     });
   });
 
   it(`can generate single mocks by just calling the function`, () => {
-    const {Person, Job, Worker} = loadFixture(`simple-types`);
+    const {Person} = loadFixture(`simple-types`);
 
     const person = Person();
 
-    expectType(person.firstName, 'string');
-    expectType(person.lastName, 'string', true);
-    expectType(person.age, 'number');
-    expectType(person.isCool, 'boolean');
+    expectType(person.firstName, `string`);
+    expectType(person.lastName, `string`, true);
+    expectType(person.age, `number`);
+    expectType(person.isCool, `boolean`);
 
-    expect(['blue', 'brown', 'green']).toContain(person.misc.eyeColor);
-    expect(['blonde', 'brown', 'red']).toContain(person.misc.hairColor);
+    expect([`blue`, `brown`, `green`]).toContain(person.misc.eyeColor);
+    expect([`blonde`, `brown`, `red`]).toContain(person.misc.hairColor);
 
     expect(Array.isArray(person.favoriteFoods)).toBeTruthy();
 
     person.favoriteFoods.forEach(food => {
-      expect(['pizza', 'ice cream', 'tacos']).toContain(food);
+      expect([`pizza`, `ice cream`, `tacos`]).toContain(food);
     });
   });
 
@@ -70,7 +70,7 @@ describe('babel-plugin-transform-flow-to-gen', () => {
       concat,
       setName,
       setNameThenCallback,
-      setNameWithGeneric
+      setNameWithGeneric,
     } = loadFixture(`simple-functions`);
 
     sample(concat.$GEN()).forEach(args => {
@@ -83,7 +83,7 @@ describe('babel-plugin-transform-flow-to-gen', () => {
 
       expect(newPerson).not.toEqual(person);
       expect(newPerson.name).toEqual(name);
-      expect(typeof newPerson.other.eyeColor).toEqual('string');
+      expect(typeof newPerson.other.eyeColor).toEqual(`string`);
     });
 
     sample(setNameThenCallback.$GEN()).forEach(args => {
@@ -92,7 +92,7 @@ describe('babel-plugin-transform-flow-to-gen', () => {
       // returns a jest mock
       expect(fn).toHaveBeenCalledTimes(0);
 
-      const newPerson = setNameThenCallback(person, name, fn);
+      setNameThenCallback(person, name, fn);
 
       expect(fn).toHaveBeenCalledTimes(1);
       expect(fn.mock.calls[0][0]).toEqual({
@@ -104,9 +104,9 @@ describe('babel-plugin-transform-flow-to-gen', () => {
     sample(setNameWithGeneric.$GEN(types.number())).forEach(args => {
       const [person] = args;
 
-      expectType(person.name, 'string');
-      expectType(person.age, 'number');
-      expectType(person.other, 'number');
+      expectType(person.name, `string`);
+      expectType(person.age, `number`);
+      expectType(person.other, `number`);
     });
   });
 });

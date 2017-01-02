@@ -13,6 +13,7 @@ export default function (babel) {
 
   const walkToRoot = path => {
     while (!t.isProgram(path.parentPath)) {
+      // eslint-disable-next-line no-param-reassign
       path = path.parentPath;
     }
 
@@ -56,34 +57,33 @@ export default function (babel) {
       },
 
       FunctionDeclaration(path) {
-        const root = walkToRoot(path);
-
         if (allParamsAreTyped(path.node)) {
           const name = path.node.id.name;
           const fn = transformFunction(name, path.node.params, path.node.typeParameters);
+          const root = walkToRoot(path);
           root.insertAfter(fn);
         }
       },
 
       FunctionExpression(path) {
-        const root = walkToRoot(path);
-
         if (allParamsAreTyped(path.node)) {
-          const name = path.node.id = t.identifier(`${GEN}__${funcExpressionCounter++}`);
+          funcExpressionCounter += 1;
+          // eslint-disable-next-line no-param-reassign
+          const name = path.node.id = t.identifier(`${GEN}__${funcExpressionCounter}`);
           const fn = transformFunction(name, path.node.params, path.node.typeParameters);
+          const root = walkToRoot(path);
           root.insertAfter(fn);
         }
       },
 
       ArrowFunctionExpression(path) {
-        const root = walkToRoot(path);
-
         if (allParamsAreTyped(path.node) && !t.isCallExpression(path.parentPath)) {
           const name = path.parentPath.node.id.name;
           const fn = transformFunction(name, path.node.params, path.node.typeParameters);
+          const root = walkToRoot(path);
           root.insertAfter(fn);
         }
-      }
+      },
     },
   };
 }

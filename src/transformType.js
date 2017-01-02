@@ -2,10 +2,8 @@ import * as babel from 'babel-core';
 import transform from './transform';
 import GEN from './GEN_ID';
 
-const { types: t } = babel;
-
 const requireStatement = babel.template(
-  `require('babel-plugin-transform-flow-to-gen/sample');`
+  `require('babel-plugin-transform-flow-to-gen/sample');`,
 )();
 
 export default function transformType(name, typeAnnotation, typeParameters) {
@@ -22,6 +20,6 @@ export default function transformType(name, typeAnnotation, typeParameters) {
     ${name}.${GEN} = ${fnName};
   `)({
     REQUIRE: requireStatement,
-    FUNC: fn
+    FUNC: fn,
   });
-};
+}

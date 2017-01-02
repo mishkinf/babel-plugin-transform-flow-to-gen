@@ -31,8 +31,8 @@ that create testcheck.js generators.
 ## Usage
 
 ```js
-import sample from 'babel-plugin-transform-flow-to-gen/sample';
-import types from 'babel-plugin-transform-flow-to-gen/types';
+import {sample} from 'babel-plugin-transform-flow-to-gen/sample';
+import * as types from 'babel-plugin-transform-flow-to-gen/types';
 
 type Person<T> = {
   firstName: string,
@@ -41,7 +41,7 @@ type Person<T> = {
 }
 
 // call the function directly to return a single fixture
-Person(types.string());
+Person(types.number());
 // {
 //   "firstName": "bcd2GH",
 //   "lastName": "oX1",

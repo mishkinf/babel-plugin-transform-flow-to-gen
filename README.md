@@ -31,7 +31,7 @@ that create testcheck.js generators.
 ## Usage
 
 ```js
-import testcheck from 'testcheck';
+import sample from 'babel-plugin-transform-flow-to-gen/sample';
 import types from 'babel-plugin-transform-flow-to-gen/types';
 
 type Person<T> = {
@@ -40,9 +40,17 @@ type Person<T> = {
   age: T
 }
 
-// 
+// call the function directly to return a single fixture
+Person(types.string());
+// {
+//   "firstName": "bcd2GH",
+//   "lastName": "oX1",
+//   "age": 1
+// }
+
+// use the generator static member to create samples
 const personGen = Person.$GEN(types.number());
-testcheck.sample(personGen);
+sample(personGen, 20);
 // [{
 //   "firstName": "9OY3o",
 //   "lastName": "fB",
@@ -68,8 +76,8 @@ function setFirstName(person: Person<number>, firstName: string) {
   // ...
 }
 
-testcheck.sample(setFirstName.$GEN());
 // returns an array of args for setFirstName
+sample(setFirstName.$GEN());
 // [
 //  [{
 //   "firstName": "3o",

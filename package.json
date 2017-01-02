@@ -60,10 +60,6 @@
         "error",
         "backtick"
       ],
-      "no-underscore-dangle": 0,
-      "import/no-extraneous-dependencies": 0,
-      "no-use-before-define": 0,
-      "global-require": 0,
       "object-curly-spacing": [
         "error",
         "never"
@@ -72,6 +68,10 @@
         "error",
         "never"
       ]
+      "no-underscore-dangle": 0,
+      "import/no-extraneous-dependencies": 0,
+      "no-use-before-define": 0,
+      "global-require": 0,
     }
   },
   "jest": {

@@ -1,7 +1,7 @@
 import {sample} from 'testcheck';
-import * as types from './types';
+import * as types from '../typeHelpers';
 
-describe(`types`, () => {
+describe(`typeHelpers`, () => {
   describe(`object`, () => {
     it(`returns a generated object`, () => {
       const gen = types.object({

@@ -8,7 +8,7 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint --fix --ext .js src/",
-    "prepublish": "rm -rf lib && babel src --out-dir lib --ignore __fixtures__,test.js",
+    "prepublish": "rm -rf lib && babel src --out-dir lib --ignore __test__,test.js",
     "release": "np"
   },
   "dependencies": {
@@ -76,7 +76,7 @@
   },
   "jest": {
     "moduleNameMapper": {
-      "babel-plugin-transform-flow-to-gen/types": "<rootDir>/src/types.js"
+      "babel-plugin-transform-flow-to-gen/types": "<rootDir>/src/typeHelpers.js"
     }
   }
 }

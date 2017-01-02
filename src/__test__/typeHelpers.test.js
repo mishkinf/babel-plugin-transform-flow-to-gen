@@ -1,5 +1,6 @@
 import {sample} from 'testcheck';
 import * as types from '../typeHelpers';
+import GEN from '../GEN_ID';
 
 describe(`typeHelpers`, () => {
   describe(`object`, () => {
@@ -178,11 +179,11 @@ describe(`typeHelpers`, () => {
 
   describe(`generic`, () => {
     it(`lazily wraps a function that returns a generator`, () => {
-      const mock = jest.fn(() => types.string());
+      const mock = {[GEN]: jest.fn(() => types.string())};
 
       const gen = types.generic(mock, []);
 
-      expect(mock).toHaveBeenCalledTimes(0);
+      expect(mock[GEN]).toHaveBeenCalledTimes(0);
 
       const samp = sample(gen);
 
@@ -190,7 +191,7 @@ describe(`typeHelpers`, () => {
         expect(typeof s).toEqual(`string`);
       });
 
-      expect(mock).toHaveBeenCalledTimes(samp.length);
+      expect(mock[GEN]).toHaveBeenCalledTimes(samp.length);
     });
   });
 

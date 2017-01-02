@@ -1,4 +1,4 @@
-import transform from './transform';
+import transformType from './transformType';
 import transformFunction from './transformFunction';
 import GEN from './GEN_ID';
 
@@ -51,7 +51,7 @@ export default function (babel) {
 
       TypeAlias(path) {
         const {node} = path;
-        const ast = transform(node.id.name, node.right, node.typeParameters);
+        const ast = transformType(node.id.name, node.right, node.typeParameters);
         path.replaceWithMultiple(ast);
       },
 

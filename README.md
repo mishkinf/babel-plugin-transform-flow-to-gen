@@ -40,10 +40,9 @@ type Person<T> = {
   age: T
 }
 
-const personGen = Person(types.number());
-
+// 
+const personGen = Person.$GEN(types.number());
 testcheck.sample(personGen);
-// returns an array of Person's
 // [{
 //   "firstName": "9OY3o",
 //   "lastName": "fB",

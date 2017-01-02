@@ -76,7 +76,8 @@
   },
   "jest": {
     "moduleNameMapper": {
-      "babel-plugin-transform-flow-to-gen/types": "<rootDir>/src/typeHelpers.js"
+      "babel-plugin-transform-flow-to-gen/types": "<rootDir>/src/typeHelpers.js",
+      "babel-plugin-transform-flow-to-gen/sample": "<rootDir>/src/sample.js"
     }
   }
 }

@@ -1,7 +1,4 @@
 import * as babel from 'babel-core';
-import generate from "babel-generator";
-import createTypeAST from './createTypeAST';
-import createGenFromAST from './createGenFromAST';
 import transform from './transform';
 import GEN from './GEN_ID';
 

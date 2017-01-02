@@ -1,4 +1,5 @@
 import {gen} from 'testcheck';
+import GEN from './GEN_ID';
 
 const error = msg => {
   throw new Error(`babel-plugin-transform-flow-to-gen/types: ${msg}`);
@@ -84,7 +85,7 @@ export const nullable = type => {
 
 export const generic = (fn, args = []) =>
   gen.bind(gen.undefined, () => {
-    const result = fn(...args);
+    const result = fn[GEN](...args);
 
     if (isUndefined(result)) {
       error(`types.generic function returned undefined`);

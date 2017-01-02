@@ -24,6 +24,7 @@ export type Person = {
   isCool: boolean,
   isMonster: false,
   misc: Misc,
+  voidedThing: void,
   favoriteFoods: Food[],
   update: (p: Person) => Person
 };

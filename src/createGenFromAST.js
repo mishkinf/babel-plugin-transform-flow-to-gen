@@ -87,7 +87,7 @@ function typeToGen(obj, params = []) {
         OBJ: createGenFromAST(obj.value, params),
       }).expression;
     default:
-      return t.identifier(`${GEN}.empty()`);
+      return t.identifier(`${GEN}.undefined()`);
   }
 }
 

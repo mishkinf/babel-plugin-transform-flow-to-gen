@@ -47,11 +47,12 @@ export default function createTypeAST(path, optional = false) {
       const value = createTypeAST(path.typeAnnotation);
       return {...base, value};
     }
-
+    // case 'void':
     // case 'function':
     // case 'string':
     // case 'number':
     // case 'boolean':
+    // etc.
     default:
       return {...base};
   }

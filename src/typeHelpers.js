@@ -83,6 +83,8 @@ export const nullable = type => {
   return gen.oneOf([gen.undefined, type]);
 };
 
+export const undefined = () => gen.undefined;
+
 export const generic = (fn, args = []) =>
   gen.bind(gen.undefined, () => {
     const result = fn[GEN](...args);

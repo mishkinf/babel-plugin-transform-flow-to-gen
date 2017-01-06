@@ -18,6 +18,10 @@ export function loadFixture(fileName) {
 }
 
 export function expectType(value, type, nullable = false) {
+  if (type === `object`) {
+    expect(!Array.isArray(value)).toBeTruthy();
+  }
+
   expect(
     // eslint-disable-next-line valid-typeof
     (typeof value === type) ||

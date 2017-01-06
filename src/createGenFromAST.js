@@ -5,7 +5,12 @@ const {types: t} = babel;
 
 function typeToGen(obj, params = []) {
   switch (obj.type) {
-    case `generic`: {
+    case `generator`: {
+      return babel.template(`${GEN}.generator(CALL)`)({
+        CALL: t.identifier(obj.funcName)
+      }).expression;
+    }
+    case `typeAlias`: {
       let index = -1;
       let i = 0;
       const len = params.length;
@@ -21,7 +26,7 @@ function typeToGen(obj, params = []) {
 
       if (index === -1) {
         // wrap in a gen.bind so that recursion is lazy
-        return babel.template(`${GEN}.generic(CALL, ARGS)`)({
+        return babel.template(`${GEN}.typeAlias(CALL, ARGS)`)({
           CALL: t.identifier(obj.name),
           ARGS: t.arrayExpression(
             obj.args.map(a => createGenFromAST(a, params)),
@@ -50,11 +55,8 @@ function typeToGen(obj, params = []) {
         VAL: createGenFromAST(obj.elementType, params),
       }).expression;
     }
-    case `booleanliteral`:
-    case `numberliteral`:
-    case `stringliteral`: {
+    case `literal`:
       return t.identifier(`${GEN}.literal(${JSON.stringify(obj.value)})`);
-    }
     case `boolean`:
       return t.identifier(`${GEN}.boolean()`);
     case `string`:

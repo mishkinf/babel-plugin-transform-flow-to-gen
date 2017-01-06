@@ -1,3 +1,27 @@
+const SPECIAL_GENERICS = [
+  `Array`,
+  `Object`,
+  `$Gen`
+];
+
+const isSpecialGeneric = name => SPECIAL_GENERICS.indexOf(name) > -1;
+
+const handleSpecialGeneric = (name, typeParameters, optional) => {
+  switch (name) {
+    case `$Gen`: {
+      const funcName = typeParameters.params[1].id.name;
+
+      return {type: `generator`, optional, funcName};
+    }
+    case `Array`: {
+      const elementType = createTypeAST(typeParameters.params[0]);
+      return {type: `array`, optional, elementType};
+    }
+    case `Object`:
+      return {type: `object`, optional, members: {}};
+  }
+};
+
 export default function createTypeAST(path, optional = false) {
   const type = path.type.replace(`TypeAnnotation`, ``).toLowerCase();
   const base = {type, optional};
@@ -6,12 +30,17 @@ export default function createTypeAST(path, optional = false) {
     case `generic`: {
       const {typeParameters} = path;
       const name = path.id.name;
+
+      if (isSpecialGeneric(name)) {
+        return handleSpecialGeneric(name, typeParameters, optional);
+      }
+
       const args =
         (typeParameters && typeParameters.params) ?
           typeParameters.params.map(p => createTypeAST(p)) :
           [];
 
-      return {...base, name, args};
+      return {type: `typeAlias`, optional, name, args};
     }
     case `object`: {
       return path.properties.reduce((acc, prop) => {
@@ -35,7 +64,7 @@ export default function createTypeAST(path, optional = false) {
     case `numberliteral`:
     case `stringliteral`: {
       const value = path.value;
-      return {...base, value};
+      return {type: `literal`, optional, value};
     }
     case `intersection`:
     case `tuple`:

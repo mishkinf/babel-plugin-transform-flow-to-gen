@@ -4,7 +4,7 @@ import {loadFixture, expectType} from './helpers';
 
 describe(`babel-plugin-transform-flow-to-gen`, () => {
   it(`works with simple types`, () => {
-    const {Person, Job, Worker} = loadFixture(`simple-types`);
+    const {Person, Job, Worker} = loadFixture(`types`);
 
     sample(Person.$GEN()).forEach(person => {
       expectType(person.firstName, `string`);
@@ -47,8 +47,18 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
     });
   });
 
+  it(`handles special generics appropriately`, () => {
+    const {Critic} = loadFixture(`types`);
+
+    sample(Critic.$GEN()).forEach(critic => {
+      expect(Array.isArray(critic.favoriteMovies)).toBeTruthy();
+      expectType(critic.style, `object`);
+      expect(critic.favoriteLetters).toEqual([`A`, `B`, `C`]);
+    });
+  });
+
   it(`can generate single mocks by just calling the function`, () => {
-    const {Person} = loadFixture(`simple-types`);
+    const {Person} = loadFixture(`types`);
 
     const person = Person();
 
@@ -73,7 +83,7 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
       setName,
       setNameThenCallback,
       setNameWithGeneric,
-    } = loadFixture(`simple-functions`);
+    } = loadFixture(`functions`);
 
     sample(concat.$GEN()).forEach(args => {
       expect(concat(...args)).toEqual(args[0] + args[1]);

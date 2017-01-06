@@ -177,11 +177,11 @@ describe(`typeHelpers`, () => {
     });
   });
 
-  describe(`generic`, () => {
+  describe(`typeAlias`, () => {
     it(`lazily wraps a function that returns a generator`, () => {
       const mock = {[GEN]: jest.fn(() => types.string())};
 
-      const gen = types.generic(mock, []);
+      const gen = types.typeAlias(mock, []);
 
       expect(mock[GEN]).toHaveBeenCalledTimes(0);
 

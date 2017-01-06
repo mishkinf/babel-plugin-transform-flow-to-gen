@@ -6,6 +6,8 @@ export type Tacos = 'tacos';
 
 export type Food = Pizza | IceCream | Tacos;
 
+export type Movie = 'Inception' | 'Jurassic Park' | 'Wayne\'s World';
+
 export type Blonde = 'blonde';
 export type Brown = 'brown';
 export type Red = 'red';
@@ -35,3 +37,11 @@ export type Job<T> = {
 };
 
 export type Worker<T> = Person & Job<T>;
+
+const alwaysABC = () => ['A', 'B', 'C'];
+
+export type Critic = {
+  favoriteMovies: Array<Movie>,
+  style: Object,
+  favoriteLetters: $Gen<string[], alwaysABC>
+};

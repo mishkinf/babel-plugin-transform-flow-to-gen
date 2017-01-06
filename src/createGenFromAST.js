@@ -54,6 +54,10 @@ function typeToGen(obj, params = []) {
       return babel.template(`${GEN}.array(${GEN}.keys(OBJ))`)({
         OBJ: createGenFromAST(obj.typeAlias),
       }).expression;
+    case `typeAliasShape`:
+      return babel.template(`${GEN}.shape(OBJ)`)({
+        OBJ: createGenFromAST(obj.typeAlias),
+      }).expression;
     case `array`:
       return babel.template(`${GEN}.array(VAL)`)({
         VAL: createGenFromAST(obj.elementType, params),

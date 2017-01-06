@@ -55,5 +55,6 @@ export type Critic = {
   favoriteMovies: Array<Movie>,
   style: Object,
   favoriteLetters: $Gen<string[], alwaysABC>,
-  someKeys: $Keys<SomeKeys>
+  someKeys: $Keys<SomeKeys>,
+  misc: $Shape<Misc>
 };

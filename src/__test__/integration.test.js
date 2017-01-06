@@ -48,7 +48,12 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
   });
 
   it(`handles special generics appropriately`, () => {
-    const {Critic} = loadFixture(`types`);
+    const {Critic, Misc} = loadFixture(`types`);
+
+    const miscKeys = Object.keys(Misc());
+
+    let foundMiscEyeColor = false;
+    let foundMiscHairColor = false;
 
     sample(Critic.$GEN()).forEach(critic => {
       expect(Array.isArray(critic.favoriteMovies)).toBeTruthy();
@@ -60,7 +65,20 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
       critic.someKeys.forEach(key => {
         expect([`A`, `BB`, `CCC`, `DDDD`]).toContain(key);
       });
+
+      expect(Object.keys(critic.misc).length).toBeLessThanOrEqual(2);
+
+      if (critic.misc.eyeColor) {
+        foundMiscEyeColor = true;
+      }
+
+      if (critic.misc.hairColor) {
+        foundMiscHairColor = true;
+      }
     });
+
+    expect(foundMiscEyeColor).toEqual(true);
+    expect(foundMiscHairColor).toEqual(true);
   });
 
   it(`can generate single mocks by just calling the function`, () => {

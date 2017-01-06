@@ -3,6 +3,7 @@ const SPECIAL_GENERICS = [
   `Object`,
   `$Gen`,
   `$Keys`,
+  `$Shape`
 ];
 
 const isSpecialGeneric = name => SPECIAL_GENERICS.indexOf(name) > -1;
@@ -16,6 +17,10 @@ const handleSpecialGeneric = (name, typeParameters, optional) => {
     case `$Keys`: {
       const typeAlias = createTypeAST(params[0]);
       return {type: `typeAliasKeys`, optional, typeAlias};
+    }
+    case `$Shape`: {
+      const typeAlias = createTypeAST(params[0]);
+      return {type: `typeAliasShape`, optional, typeAlias};
     }
     case `Array`: {
       const elementType = createTypeAST(params[0]);

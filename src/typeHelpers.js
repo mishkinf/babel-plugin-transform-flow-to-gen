@@ -5,9 +5,15 @@ const error = msg => {
   throw new Error(`babel-plugin-transform-flow-to-gen/types: ${msg}`);
 };
 
+const toString = Object.prototype.toString;
+
 const isUndefined = obj => typeof obj === `undefined`;
 const isFunction = obj => typeof obj === `function`;
-const isObject = obj => !Array.isArray(obj) && typeof obj === `object`;
+const isObject = obj => (
+  !Array.isArray(obj) &&
+  typeof obj === 'object' &&
+  toString.call(obj) === `[object Object]`
+);
 
 export const object = shape => {
   if (!isObject(shape)) {
@@ -75,13 +81,27 @@ export const tuple = arr => {
 };
 
 export const keys = type =>
-  gen.map(obj => {
-    const keyss = Object.keys(obj);
-    const len = keyss.length;
-    const i = Math.floor(Math.random() * len);
+  gen.bind(type, obj => {
+    if (!isObject(obj)) {
+      error(`types.keys expected a object generator.`);
+    }
 
-    return keyss[i];
-  }, type);
+    const keyss = Object.keys(obj);
+    return gen.returnOneOf(keyss);
+  });
+
+export const shape = type =>
+  gen.bind(array(keys(type)), keys =>
+    gen.map(obj => {
+      if (!isObject(obj)) {
+        error(`types.shape expected a object generator.`);
+      }
+
+      return keys.reduce((acc, key) => {
+        return Object.assign({}, acc, {[key]: obj[key]});
+      }, obj);
+    }, type)
+  );
 
 export const undef = () => gen.undefined;
 

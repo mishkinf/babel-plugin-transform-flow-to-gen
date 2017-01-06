@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "babel-plugin-syntax-flow": "^6.18.0",
+    "eslint-plugin-flowtype": "^2.29.2",
     "testcheck": "^0.1.4"
   },
   "devDependencies": {
@@ -44,9 +45,12 @@
   "eslintConfig": {
     "parser": "babel-eslint",
     "extends": [
-      "airbnb-base"
+      "airbnb-base",
+      "plugin:flowtype/recommended"
     ],
-    "plugins": [],
+    "plugins": [
+      "flowtype"
+    ],
     "env": {
       "browser": true,
       "jest": true

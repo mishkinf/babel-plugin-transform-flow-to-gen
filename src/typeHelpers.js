@@ -74,6 +74,15 @@ export const tuple = arr => {
   );
 };
 
+export const keys = type =>
+  gen.map(obj => {
+    const keyss = Object.keys(obj);
+    const len = keyss.length;
+    const i = Math.floor(Math.random() * len);
+
+    return keyss[i];
+  }, type);
+
 export const undef = () => gen.undefined;
 
 export const nullable = type => {

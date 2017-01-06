@@ -54,6 +54,12 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
       expect(Array.isArray(critic.favoriteMovies)).toBeTruthy();
       expectType(critic.style, `object`);
       expect(critic.favoriteLetters).toEqual([`A`, `B`, `C`]);
+
+      expect(Array.isArray(critic.someKeys)).toBeTruthy();
+
+      critic.someKeys.forEach(key => {
+        expect([`A`, `BB`, `CCC`, `DDDD`]).toContain(key);
+      });
     });
   });
 

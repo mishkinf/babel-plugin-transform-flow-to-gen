@@ -44,8 +44,16 @@ export type Worker<T> = Person & Job<T>;
 
 const alwaysABC = () => [`A`, `B`, `C`];
 
+type SomeKeys = {
+  A: string,
+  BB: string,
+  CCC: string,
+  DDDD: string
+};
+
 export type Critic = {
   favoriteMovies: Array<Movie>,
   style: Object,
-  favoriteLetters: $Gen<string[], alwaysABC>
+  favoriteLetters: $Gen<string[], alwaysABC>,
+  someKeys: $Keys<SomeKeys>
 };

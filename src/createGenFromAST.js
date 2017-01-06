@@ -7,7 +7,7 @@ function typeToGen(obj, params = []) {
   switch (obj.type) {
     case `generator`: {
       return babel.template(`${GEN}.generator(CALL)`)({
-        CALL: t.identifier(obj.funcName),
+        CALL: t.identifier(obj.name),
       }).expression;
     }
     case `typeAlias`: {
@@ -50,11 +50,14 @@ function typeToGen(obj, params = []) {
         ),
       }).expression;
     }
-    case `array`: {
+    case `typeAliasKeys`:
+      return babel.template(`${GEN}.array(${GEN}.keys(OBJ))`)({
+        OBJ: createGenFromAST(obj.typeAlias),
+      }).expression;
+    case `array`:
       return babel.template(`${GEN}.array(VAL)`)({
         VAL: createGenFromAST(obj.elementType, params),
       }).expression;
-    }
     case `literal`:
       return t.identifier(`${GEN}.literal(${JSON.stringify(obj.value)})`);
     case `boolean`:

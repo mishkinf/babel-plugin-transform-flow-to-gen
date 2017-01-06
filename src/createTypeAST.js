@@ -2,18 +2,23 @@ const SPECIAL_GENERICS = [
   `Array`,
   `Object`,
   `$Gen`,
+  `$Keys`,
 ];
 
 const isSpecialGeneric = name => SPECIAL_GENERICS.indexOf(name) > -1;
 
 const handleSpecialGeneric = (name, typeParameters, optional) => {
+  const params = (typeParameters && typeParameters.params) || [];
+
   switch (name) {
-    case `$Gen`: {
-      const funcName = typeParameters.params[1].id.name;
-      return {type: `generator`, optional, funcName};
+    case `$Gen`:
+      return {type: `generator`, optional, name: params[1].id.name};
+    case `$Keys`: {
+      const typeAlias = createTypeAST(params[0]);
+      return {type: `typeAliasKeys`, optional, typeAlias};
     }
     case `Array`: {
-      const elementType = createTypeAST(typeParameters.params[0]);
+      const elementType = createTypeAST(params[0]);
       return {type: `array`, optional, elementType};
     }
     case `Object`:

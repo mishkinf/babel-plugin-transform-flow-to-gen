@@ -1,5 +1,9 @@
 // @flow
 
+// has to be relative to the file where this gets eval'd
+// eslint-disable-next-line import/no-unresolved, import/extensions
+import type {$Gen} from '../$Gen';
+
 export type Pizza = 'pizza';
 export type IceCream = 'ice cream';
 export type Tacos = 'tacos';
@@ -38,7 +42,7 @@ export type Job<T> = {
 
 export type Worker<T> = Person & Job<T>;
 
-const alwaysABC = () => ['A', 'B', 'C'];
+const alwaysABC = () => [`A`, `B`, `C`];
 
 export type Critic = {
   favoriteMovies: Array<Movie>,

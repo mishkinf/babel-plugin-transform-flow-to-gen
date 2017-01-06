@@ -74,22 +74,22 @@ export const tuple = arr => {
   );
 };
 
+export const undef = () => gen.undefined;
+
 export const nullable = type => {
   if (isUndefined(type)) {
     error(`types.nullable did not receive an argument.`);
   }
 
-  return gen.oneOf([gen.undefined, type]);
+  return gen.oneOf([undef(), type]);
 };
-
-export const undefined = () => gen.undefined;
 
 export const typeAlias = (fn, args = []) => {
   if (!isFunction(fn[GEN])) {
     error(`types.typeAlias expected a typeAlias as first argument. Instead got ${JSON.stringify(fn)}.`);
   }
 
-  return gen.bind(gen.undefined, () => {
+  return gen.bind(undef(), () => {
     const result = fn[GEN](...args);
 
     if (isUndefined(result)) {
@@ -105,11 +105,11 @@ export const generator = fn => {
     error(`types.generator expected a generator function as first argument. Instead got ${JSON.stringify(fn)}.`);
   }
 
-  return gen.map(fn, gen.undefined);
+  return gen.map(fn, undef());
 };
 
 export const mock = () =>
-  gen.bind(gen.undefined, () =>
+  gen.bind(undef(), () =>
     // use a jest mock if this is being run with jest
     (typeof jest === `object` ? gen.return(jest.fn()) : gen.return(() => {})),
   );

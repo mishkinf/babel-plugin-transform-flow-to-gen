@@ -109,7 +109,7 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
       expect(fn).toHaveBeenCalledTimes(1);
       expect(fn.mock.calls[0][0]).toEqual({
         ...person,
-        name
+        name,
       });
     });
 

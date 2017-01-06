@@ -7,7 +7,7 @@ function typeToGen(obj, params = []) {
   switch (obj.type) {
     case `generator`: {
       return babel.template(`${GEN}.generator(CALL)`)({
-        CALL: t.identifier(obj.funcName)
+        CALL: t.identifier(obj.funcName),
       }).expression;
     }
     case `typeAlias`: {
@@ -89,7 +89,7 @@ function typeToGen(obj, params = []) {
         OBJ: createGenFromAST(obj.value, params),
       }).expression;
     default:
-      return t.identifier(`${GEN}.undefined()`);
+      return t.identifier(`${GEN}.undef()`);
   }
 }
 

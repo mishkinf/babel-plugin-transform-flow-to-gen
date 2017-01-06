@@ -1,7 +1,7 @@
 const SPECIAL_GENERICS = [
   `Array`,
   `Object`,
-  `$Gen`
+  `$Gen`,
 ];
 
 const isSpecialGeneric = name => SPECIAL_GENERICS.indexOf(name) > -1;
@@ -10,7 +10,6 @@ const handleSpecialGeneric = (name, typeParameters, optional) => {
   switch (name) {
     case `$Gen`: {
       const funcName = typeParameters.params[1].id.name;
-
       return {type: `generator`, optional, funcName};
     }
     case `Array`: {
@@ -19,6 +18,8 @@ const handleSpecialGeneric = (name, typeParameters, optional) => {
     }
     case `Object`:
       return {type: `object`, optional, members: {}};
+    default:
+      throw new Error(`createTypeAST: ${name} is not a special generic type`);
   }
 };
 

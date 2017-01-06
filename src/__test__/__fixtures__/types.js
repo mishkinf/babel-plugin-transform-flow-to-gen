@@ -56,5 +56,6 @@ export type Critic = {
   style: Object,
   favoriteLetters: $Gen<string[], alwaysABC>,
   someKeys: $Keys<SomeKeys>,
-  misc: $Shape<Misc>
+  misc: $Shape<Misc>,
+  friend: $Subtype<Person>
 };

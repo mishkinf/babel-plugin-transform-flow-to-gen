@@ -2,27 +2,29 @@ import {sample} from 'testcheck';
 import * as types from '../typeHelpers';
 import {loadFixture, expectType} from './helpers';
 
+const isPerson = person => {
+  expectType(person.firstName, `string`);
+  expectType(person.lastName, `string`, true);
+  expectType(person.age, `number`);
+  expectType(person.isCool, `boolean`);
+  expectType(person.isMonster, `boolean`);
+
+  expect(person.isMonster).toEqual(false);
+  expect([`blue`, `brown`, `green`]).toContain(person.misc.eyeColor);
+  expect([`blonde`, `brown`, `red`]).toContain(person.misc.hairColor);
+
+  expect(Array.isArray(person.favoriteFoods)).toBeTruthy();
+
+  person.favoriteFoods.forEach(food => {
+    expect([`pizza`, `ice cream`, `tacos`]).toContain(food);
+  });
+};
+
 describe(`babel-plugin-transform-flow-to-gen`, () => {
   it(`works with simple types`, () => {
     const {Person, Job, Worker} = loadFixture(`types`);
 
-    sample(Person.$GEN()).forEach(person => {
-      expectType(person.firstName, `string`);
-      expectType(person.lastName, `string`, true);
-      expectType(person.age, `number`);
-      expectType(person.isCool, `boolean`);
-      expectType(person.isMonster, `boolean`);
-
-      expect(person.isMonster).toEqual(false);
-      expect([`blue`, `brown`, `green`]).toContain(person.misc.eyeColor);
-      expect([`blonde`, `brown`, `red`]).toContain(person.misc.hairColor);
-
-      expect(Array.isArray(person.favoriteFoods)).toBeTruthy();
-
-      person.favoriteFoods.forEach(food => {
-        expect([`pizza`, `ice cream`, `tacos`]).toContain(food);
-      });
-    });
+    sample(Person.$GEN()).forEach(isPerson);
 
     const other = types.object({
       a: types.string(),
@@ -41,7 +43,7 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
     });
 
     sample(Worker.$GEN(other)).forEach(worker => {
-      expectType(worker.firstName, `string`);
+      isPerson(worker);
       expectType(worker.jobTitle, `string`);
       expectType(worker.other.a, `string`);
     });
@@ -75,6 +77,8 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
       if (critic.misc.hairColor) {
         foundMiscHairColor = true;
       }
+
+      isPerson(critic.friend);
     });
 
     expect(foundMiscEyeColor).toEqual(true);

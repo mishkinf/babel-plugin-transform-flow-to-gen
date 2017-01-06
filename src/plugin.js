@@ -20,8 +20,6 @@ export default function (babel) {
     return path;
   };
 
-  let funcExpressionCounter = 0;
-
   return {
     inherits: require(`babel-plugin-syntax-flow`),
 
@@ -66,10 +64,8 @@ export default function (babel) {
       },
 
       FunctionExpression(path) {
-        if (allParamsAreTyped(path.node)) {
-          funcExpressionCounter += 1;
-          // eslint-disable-next-line no-param-reassign
-          const name = path.node.id = t.identifier(`${GEN}__${funcExpressionCounter}`);
+        if (allParamsAreTyped(path.node) && t.isVariableDeclarator(path.parentPath)) {
+          const {name} = path.parentPath.node.id;
           const fn = transformFunction(name, path.node.params, path.node.typeParameters);
           const root = walkToRoot(path);
           root.insertAfter(fn);

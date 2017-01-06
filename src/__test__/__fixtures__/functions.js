@@ -19,11 +19,7 @@ export function setName(person: Person<Misc>, name: string) {
   };
 }
 
-export function setNameThenCallback(
-  person: Person<Misc>,
-  name: string,
-  callback: (p: Person) => void,
-): void {
+export const setNameThenCallback = function(person: Person<Misc>, name: string, callback: (p: Person) => void): void {
   const newPerson = {
     ...person,
     name,
@@ -32,7 +28,7 @@ export function setNameThenCallback(
   callback(newPerson);
 }
 
-export function setNameWithGeneric<T>(person: Person<T>, name: string) {
+export const setNameWithGeneric = <T>(person: Person<T>, name: string) => {
   return {
     ...person,
     name,

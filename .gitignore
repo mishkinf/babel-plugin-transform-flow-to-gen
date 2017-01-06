@@ -2,3 +2,4 @@ node_modules
 lib
 demo/bundle.js
 npm-debug.log
+coverage

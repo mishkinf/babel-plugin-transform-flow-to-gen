@@ -193,6 +193,78 @@ describe(`typeHelpers`, () => {
 
       expect(mock[GEN]).toHaveBeenCalledTimes(samp.length);
     });
+
+    it(`throws when it does not receive a generator`, () => {
+      expect(() => {
+        types.typeAlias();
+      }).toThrow(/babel-plugin-transform-flow-to-gen/);
+
+      expect(() => {
+        types.typeAlias({});
+      }).toThrow(/babel-plugin-transform-flow-to-gen/);
+
+      expect(() => {
+        types.typeAlias(function() {});
+      }).toThrow(/babel-plugin-transform-flow-to-gen/);
+    });
+  });
+
+  describe(`keys`, () => {
+    it(`returns a generator that randomly selects a key`, () => {
+      const obj = {
+        a: types.string(),
+        b: types.string(),
+        c: types.string(),
+        d: types.string()
+      };
+
+      const gen = types.object(obj);
+      const samp = sample(types.keys(gen))
+
+      samp.forEach(s => {
+        expect(Object.keys(obj)).toContain(s);
+      });
+    });
+
+    it(`throws when the type isn't an object`, () => {
+      expect(() => {
+        types.keys();
+      }).toThrow(/babel-plugin-transform-flow-to-gen/);
+
+      expect(() => {
+        sample(types.keys(types.string()));
+      }).toThrow(/babel-plugin-transform-flow-to-gen/);
+    });
+  });
+
+  describe(`shape`, () => {
+    it(`throws when the type isn't an object`, () => {
+      expect(() => {
+        types.shape();
+      }).toThrow(/babel-plugin-transform-flow-to-gen/);
+
+      expect(() => {
+        sample(types.shape(types.string()));
+      }).toThrow(/babel-plugin-transform-flow-to-gen/);
+    });
+  });
+
+  describe(`generator`, () => {
+    it(`throws when the type isn't a function`, () => {
+      expect(() => {
+        types.generator();
+      }).toThrow(/babel-plugin-transform-flow-to-gen/);
+
+      expect(() => {
+        types.generator({});
+      }).toThrow(/babel-plugin-transform-flow-to-gen/);
+    });
+  });
+
+  describe(`empty`, () => {
+    sample(types.empty()).forEach(s => {
+      expect(s).toEqual({});
+    });
   });
 
   describe(`mock`, () => {

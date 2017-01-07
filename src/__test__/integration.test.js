@@ -4,6 +4,7 @@ import {loadFixture, expectType} from './helpers';
 
 const isPerson = person => {
   expectType(person.firstName, `string`);
+  expectType(person.middleName, `string`, true);
   expectType(person.lastName, `string`, true);
   expectType(person.age, `number`);
   expectType(person.isCool, `boolean`);

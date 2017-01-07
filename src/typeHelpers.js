@@ -11,7 +11,7 @@ const isUndefined = obj => typeof obj === `undefined`;
 const isFunction = obj => typeof obj === `function`;
 const isObject = obj => (
   !Array.isArray(obj) &&
-  typeof obj === 'object' &&
+  typeof obj === `object` &&
   toString.call(obj) === `[object Object]`
 );
 
@@ -80,8 +80,12 @@ export const tuple = arr => {
   );
 };
 
-export const keys = type =>
-  gen.bind(type, obj => {
+export const keys = type => {
+  if (isUndefined(type)) {
+    error(`types.keys expected an argument.`);
+  }
+
+  return gen.bind(type, obj => {
     if (!isObject(obj)) {
       error(`types.keys expected a object generator.`);
     }
@@ -89,6 +93,7 @@ export const keys = type =>
     const keyss = Object.keys(obj);
     return gen.returnOneOf(keyss);
   });
+};
 
 export const shape = type =>
   gen.bind(array(keys(type)), keys =>
@@ -97,10 +102,8 @@ export const shape = type =>
         error(`types.shape expected a object generator.`);
       }
 
-      return keys.reduce((acc, key) => {
-        return Object.assign({}, acc, {[key]: obj[key]});
-      }, obj);
-    }, type)
+      return keys.reduce((acc, key) => Object.assign({}, acc, {[key]: obj[key]}), obj);
+    }, type),
   );
 
 export const undef = () => gen.undefined;
@@ -114,19 +117,11 @@ export const nullable = type => {
 };
 
 export const typeAlias = (fn, args = []) => {
-  if (!isFunction(fn[GEN])) {
+  if (!fn || !isFunction(fn[GEN])) {
     error(`types.typeAlias expected a typeAlias as first argument. Instead got ${JSON.stringify(fn)}.`);
   }
 
-  return gen.bind(undef(), () => {
-    const result = fn[GEN](...args);
-
-    if (isUndefined(result)) {
-      error(`types.typeAlias function returned undefined`);
-    }
-
-    return result;
-  });
+  return gen.bind(undef(), () => fn[GEN](...args));
 };
 
 export const generator = fn => {

@@ -25,6 +25,7 @@ export type Misc = {
 
 export type Person = {
   firstName: string,
+  middleName?: string,
   lastName: ?string,
   age: Age,
   isCool: boolean,

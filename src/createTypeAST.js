@@ -4,7 +4,7 @@ const SPECIAL_GENERICS = [
   `$Gen`,
   `$Keys`,
   `$Shape`,
-  `$Subtype`
+  `$Subtype`,
 ];
 
 const isSpecialGeneric = name => SPECIAL_GENERICS.indexOf(name) > -1;
@@ -32,8 +32,6 @@ const handleSpecialGeneric = (name, typeParameters, optional) => {
     }
     case `Object`:
       return {type: `object`, optional, members: {}};
-    default:
-      throw new Error(`createTypeAST: ${name} is not a special generic type`);
   }
 };
 

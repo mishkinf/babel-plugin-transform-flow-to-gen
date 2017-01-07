@@ -204,7 +204,7 @@ describe(`typeHelpers`, () => {
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
 
       expect(() => {
-        types.typeAlias(function() {});
+        types.typeAlias(() => {});
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
     });
   });
@@ -215,11 +215,11 @@ describe(`typeHelpers`, () => {
         a: types.string(),
         b: types.string(),
         c: types.string(),
-        d: types.string()
+        d: types.string(),
       };
 
       const gen = types.object(obj);
-      const samp = sample(types.keys(gen))
+      const samp = sample(types.keys(gen));
 
       samp.forEach(s => {
         expect(Object.keys(obj)).toContain(s);

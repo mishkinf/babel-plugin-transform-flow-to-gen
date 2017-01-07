@@ -19,10 +19,11 @@ export function setName(person: Person<Misc>, name: string) {
   };
 }
 
+// eslint-disable-next-line func-names
 export const setNameThenCallback = function (
   person: Person<Misc>,
   name: string,
-  callback: (p: Person) => void
+  callback: (p: Person) => void,
 ): void {
   const newPerson = {
     ...person,

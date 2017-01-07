@@ -96,13 +96,13 @@ export const keys = type => {
 };
 
 export const shape = type =>
-  gen.bind(array(keys(type)), keys =>
+  gen.bind(array(keys(type)), keyss =>
     gen.map(obj => {
       if (!isObject(obj)) {
         error(`types.shape expected a object generator.`);
       }
 
-      return keys.reduce((acc, key) => Object.assign({}, acc, {[key]: obj[key]}), obj);
+      return keyss.reduce((acc, key) => Object.assign({}, acc, {[key]: obj[key]}), obj);
     }, type),
   );
 

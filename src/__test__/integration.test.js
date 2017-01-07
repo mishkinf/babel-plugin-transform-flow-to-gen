@@ -51,9 +51,7 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
   });
 
   it(`handles special generics appropriately`, () => {
-    const {Critic, Misc} = loadFixture(`types`);
-
-    const miscKeys = Object.keys(Misc());
+    const {Critic} = loadFixture(`types`);
 
     let foundMiscEyeColor = false;
     let foundMiscHairColor = false;

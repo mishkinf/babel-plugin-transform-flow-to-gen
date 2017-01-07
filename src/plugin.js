@@ -1,6 +1,5 @@
 import transformType from './transformType';
 import transformFunction from './transformFunction';
-import GEN from './GEN_ID';
 
 export default function (babel) {
   const {types: t} = babel;

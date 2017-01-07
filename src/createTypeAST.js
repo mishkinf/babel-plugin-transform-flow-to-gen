@@ -9,9 +9,11 @@ const SPECIAL_GENERICS = [
 
 const isSpecialGeneric = name => SPECIAL_GENERICS.indexOf(name) > -1;
 
+// eslint-disable-next-line consistent-return
 const handleSpecialGeneric = (name, typeParameters, optional) => {
   const params = (typeParameters && typeParameters.params) || [];
 
+  // eslint-disable-next-line default-case
   switch (name) {
     case `$Gen`:
       return {type: `generator`, optional, name: params[1].id.name};

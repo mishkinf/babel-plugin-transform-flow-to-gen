@@ -1,10 +1,10 @@
-// @flow
+// @flow weak
 
-import testcheck from 'testcheck';
+import {sample} from 'babel-plugin-transform-flow-to-gen/api';
 import {Person} from './Person';
 import {Other} from './Other';
 
 const root = document.querySelector('#root');
-const json = testcheck.sample(Person(Other()));
+const json = sample(Person(Other()));
 
 root.innerText = JSON.stringify(json, 2, 2);

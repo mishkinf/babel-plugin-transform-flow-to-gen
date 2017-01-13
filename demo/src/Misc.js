@@ -1,3 +1,5 @@
+// @flow
+
 type Blonde = 'blonde';
 type Brown = 'brown';
 type Red = 'red';

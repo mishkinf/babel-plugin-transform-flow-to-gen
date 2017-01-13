@@ -13,8 +13,7 @@ export default function transformType(name, typeAnnotation, typeParameters) {
 
   return babel.template(`
     function ${name}(...args) {
-      var sampleOne = REQUIRE;
-      return sampleOne(${fnName}(...args));
+      return REQUIRE(${fnName}(...args));
     }
     FUNC;
     ${name}.${GEN} = ${fnName};

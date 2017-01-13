@@ -7,6 +7,7 @@ declare module 'babel-plugin-transform-flow-to-gen' {
     sample: any,
     sampleOne: any,
     types: any,
-    asGenerator: any
+    asGenerator: any,
+    $Gen: $Gen
   };
 }

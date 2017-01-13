@@ -44,7 +44,7 @@ type Person<T> = {
 }
 
 // use the generator static member to create samples
-const personGen = Person.$GEN(types.number());
+const personGen = Person(types.number());
 sample(personGen, 20);
 // [{
 //   "firstName": "9OY3o",
@@ -72,7 +72,7 @@ function setFirstName(person: Person<number>, firstName: string) {
 }
 
 // returns an array of args for setFirstName
-sample(setFirstName.$GEN());
+sample(setFirstName.asGenerator());
 // [
 //  [{
 //   "firstName": "3o",

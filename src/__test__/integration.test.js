@@ -95,11 +95,11 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
       setNameWithGeneric,
     } = loadFixture(`functions`);
 
-    sample(concat.$GEN()).forEach(args => {
+    sample(concat.asGenerator()).forEach(args => {
       expect(concat(...args)).toEqual(args[0] + args[1]);
     });
 
-    sample(setName.$GEN()).forEach(args => {
+    sample(setName.asGenerator()).forEach(args => {
       const [person, name] = args;
       const newPerson = setName(person, name);
 
@@ -108,7 +108,7 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
       expect(typeof newPerson.other.eyeColor).toEqual(`string`);
     });
 
-    sample(setNameThenCallback.$GEN()).forEach(args => {
+    sample(setNameThenCallback.asGenerator()).forEach(args => {
       const [person, name, fn] = args;
 
       // returns a jest mock
@@ -123,7 +123,7 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
       });
     });
 
-    sample(setNameWithGeneric.$GEN(types.number())).forEach(args => {
+    sample(setNameWithGeneric.asGenerator(types.number())).forEach(args => {
       const [person] = args;
 
       expectType(person.name, `string`);

@@ -13,7 +13,7 @@ export default function transformFunction(name, funcParams = [], typeParameters)
 
   const fn = transform(fnName, args, typeParameters);
 
-  return babel.template(`FUNC; ${name}.${GEN} = ${fnName};`)({
+  return babel.template(`FUNC; ${name}.asGenerator = ${fnName};`)({
     FUNC: fn,
   });
 }

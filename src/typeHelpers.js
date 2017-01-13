@@ -138,5 +138,7 @@ export const mock = () =>
     (typeof jest === `object` ? gen.return(jest.fn()) : gen.return(() => {})),
   );
 
+export const garbage = () => gen.any;
+
 export const empty = () =>
   gen.return({});

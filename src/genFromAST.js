@@ -99,6 +99,8 @@ function typeToGen(obj, params = []) {
       return expression(`${GEN}.nullable(OBJ)`, {
         OBJ: genFromAST(obj.value, params),
       });
+    case `garbage`:
+      return t.identifier(`${GEN}.garbage()`);
     default:
       return t.identifier(`${GEN}.undef()`);
   }

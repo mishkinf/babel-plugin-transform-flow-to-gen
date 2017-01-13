@@ -71,31 +71,28 @@ export default function typeAST(path, optional = false) {
         };
       }, {...base, members: {}});
     }
-    case `array`: {
-      const elementType = typeAST(path.elementType);
-      return {...base, elementType};
-    }
+    case `array`:
+      return {...base, elementType: typeAST(path.elementType)};
+    case `nullliteral`:
+      return {type: `literal`, optional, value: null};
     case `booleanliteral`:
     case `numberliteral`:
-    case `stringliteral`: {
-      const value = path.value;
-      return {type: `literal`, optional, value};
-    }
+    case `stringliteral`:
+      return {type: `literal`, optional, value: path.value};
     case `intersection`:
     case `tuple`:
-    case `union`: {
-      const entries = path.types.map(p => typeAST(p));
-      return {...base, entries};
-    }
-    case `nullable`: {
-      const value = typeAST(path.typeAnnotation);
-      return {...base, value};
-    }
-    case `void`:
-    case `function`:
-    case `string`:
-    case `number`:
-    case `boolean`:
+    case `union`:
+      return {...base, entries: path.types.map(p => typeAST(p))};
+    case `nullable`:
+      return {...base, value: typeAST(path.typeAnnotation)};
+    case `any`:
+    case `mixed`:
+      return {type: 'garbage', optional};
+    // case `void`:
+    // case `function`:
+    // case `string`:
+    // case `number`:
+    // case `boolean`:
     default:
       return {...base};
   }

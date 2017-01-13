@@ -61,5 +61,7 @@ export type Critic = {
   numberToLetter: $Gen<string, convertToLengthString>,
   someKeys: $Keys<SomeKeys>,
   misc: $Shape<Misc>,
-  friend: $Subtype<Person>
+  friend: $Subtype<Person>,
+  nothing: null,
+  nonsense: any
 };

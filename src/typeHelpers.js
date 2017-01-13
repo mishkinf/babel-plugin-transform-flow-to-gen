@@ -124,12 +124,12 @@ export const typeAlias = (fn, args = []) => {
   return gen.bind(undef(), () => fn[GEN](...args));
 };
 
-export const generator = fn => {
-  if (!isFunction(fn)) {
-    error(`types.generator expected a generator function as first argument. Instead got ${JSON.stringify(fn)}.`);
+export const generator = (type, mapFn) => {
+  if (!isFunction(mapFn)) {
+    error(`types.generator expected a generator function as first argument. Instead got ${JSON.stringify(mapFn)}.`);
   }
 
-  return gen.map(fn, undef());
+  return gen.map(mapFn, type);
 };
 
 export const mock = () =>

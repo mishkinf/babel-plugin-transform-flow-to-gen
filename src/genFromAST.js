@@ -6,7 +6,8 @@ const {types: t} = babel;
 function typeToGen(obj, params = []) {
   switch (obj.type) {
     case `generator`: {
-      return babel.template(`${GEN}.generator(CALL)`)({
+      return babel.template(`${GEN}.generator(ARG, CALL)`)({
+        ARG: genFromAST(obj.typeAlias),
         CALL: t.identifier(obj.name),
       }).expression;
     }

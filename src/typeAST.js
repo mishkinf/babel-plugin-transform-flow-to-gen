@@ -16,7 +16,7 @@ const handleSpecialGeneric = (name, typeParameters, optional) => {
   // eslint-disable-next-line default-case
   switch (name) {
     case `$Gen`:
-      return {type: `generator`, optional, name: params[1].id.name};
+      return {type: `generator`, optional, typeAlias: typeAST(params[0]), name: params[1].id.name};
     case `$Keys`: {
       const typeAlias = typeAST(params[0]);
       return {type: `typeAliasKeys`, optional, typeAlias};

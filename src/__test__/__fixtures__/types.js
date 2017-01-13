@@ -45,6 +45,8 @@ export type Worker<T> = Person & Job<T>;
 
 const alwaysABC = () => [`A`, `B`, `C`];
 
+const convertToLengthString = str => str.length.toString();
+
 type SomeKeys = {
   A: string,
   BB: string,
@@ -56,6 +58,7 @@ export type Critic = {
   favoriteMovies: Array<Movie>,
   style: Object,
   favoriteLetters: $Gen<string[], alwaysABC>,
+  numberToLetter: $Gen<string, convertToLengthString>,
   someKeys: $Keys<SomeKeys>,
   misc: $Shape<Misc>,
   friend: $Subtype<Person>

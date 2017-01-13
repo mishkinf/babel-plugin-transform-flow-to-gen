@@ -10,7 +10,7 @@ function typeToGen(obj, params = []) {
   switch (obj.type) {
     case `generator`: {
       return expression(`${GEN}.generator(ARG, CALL)`, {
-        ARG: genFromAST(obj.typeAlias),
+        ARG: genFromAST(obj.typeAlias, params),
         CALL: t.identifier(obj.name),
       });
     }
@@ -56,11 +56,11 @@ function typeToGen(obj, params = []) {
     }
     case `typeAliasKeys`:
       return expression(`${GEN}.array(${GEN}.keys(OBJ))`, {
-        OBJ: genFromAST(obj.typeAlias),
+        OBJ: genFromAST(obj.typeAlias, params),
       });
     case `typeAliasShape`:
       return expression(`${GEN}.shape(OBJ)`, {
-        OBJ: genFromAST(obj.typeAlias),
+        OBJ: genFromAST(obj.typeAlias, params),
       });
     case `array`:
       return expression(`${GEN}.array(VAL)`, {

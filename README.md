@@ -39,14 +39,6 @@ type Person<T> = {
   age: T
 }
 
-// call the function directly to return a single fixture
-Person(types.number());
-// {
-//   "firstName": "bcd2GH",
-//   "lastName": "oX1",
-//   "age": 1
-// }
-
 // use the generator static member to create samples
 const personGen = Person.$GEN(types.number());
 sample(personGen, 20);

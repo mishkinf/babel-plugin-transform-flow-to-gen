@@ -1,7 +1,6 @@
 import {sample} from 'testcheck';
 import * as types from '../typeHelpers';
 import {loadFixture, expectType} from './helpers';
-import asGenerator from '../asGenerator';
 
 const isPerson = person => {
   expectType(person.firstName, `string`);
@@ -26,25 +25,25 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
   it(`works with simple types`, () => {
     const {Person, Job, Worker} = loadFixture(`types`);
 
-    sample(asGenerator(Person)).forEach(isPerson);
+    sample(Person()).forEach(isPerson);
 
     const other = types.object({
       a: types.string(),
       b: types.boolean(),
     });
 
-    sample(asGenerator(Job, other)).forEach(job => {
+    sample(Job(other)).forEach(job => {
       expectType(job.jobTitle, `string`);
       expectType(job.other, `object`);
       expectType(job.other.a, `string`);
       expectType(job.other.b, `boolean`);
     });
 
-    sample(asGenerator(Job, types.string())).forEach(job => {
+    sample(Job(types.string())).forEach(job => {
       expectType(job.other, `string`);
     });
 
-    sample(asGenerator(Worker, other)).forEach(worker => {
+    sample(Worker(other)).forEach(worker => {
       isPerson(worker);
       expectType(worker.jobTitle, `string`);
       expectType(worker.other.a, `string`);
@@ -57,7 +56,7 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
     let foundMiscEyeColor = false;
     let foundMiscHairColor = false;
 
-    sample(asGenerator(Critic)).forEach(critic => {
+    sample(Critic()).forEach(critic => {
       expect(Array.isArray(critic.favoriteMovies)).toBeTruthy();
       expectType(critic.style, `object`);
       expect(critic.favoriteLetters).toEqual([`A`, `B`, `C`]);
@@ -86,26 +85,6 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
     expect(foundMiscHairColor).toEqual(true);
   });
 
-  it(`can generate single mocks by just calling the function`, () => {
-    const {Person} = loadFixture(`types`);
-
-    const person = Person();
-
-    expectType(person.firstName, `string`);
-    expectType(person.lastName, `string`, true);
-    expectType(person.age, `number`);
-    expectType(person.isCool, `boolean`);
-
-    expect([`blue`, `brown`, `green`]).toContain(person.misc.eyeColor);
-    expect([`blonde`, `brown`, `red`]).toContain(person.misc.hairColor);
-
-    expect(Array.isArray(person.favoriteFoods)).toBeTruthy();
-
-    person.favoriteFoods.forEach(food => {
-      expect([`pizza`, `ice cream`, `tacos`]).toContain(food);
-    });
-  });
-
   it(`works with simple function types`, () => {
     const {
       concat,
@@ -114,11 +93,11 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
       setNameWithGeneric,
     } = loadFixture(`functions`);
 
-    sample(asGenerator(concat)).forEach(args => {
+    sample(concat.$GEN()).forEach(args => {
       expect(concat(...args)).toEqual(args[0] + args[1]);
     });
 
-    sample(asGenerator(setName)).forEach(args => {
+    sample(setName.$GEN()).forEach(args => {
       const [person, name] = args;
       const newPerson = setName(person, name);
 
@@ -127,7 +106,7 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
       expect(typeof newPerson.other.eyeColor).toEqual(`string`);
     });
 
-    sample(asGenerator(setNameThenCallback)).forEach(args => {
+    sample(setNameThenCallback.$GEN()).forEach(args => {
       const [person, name, fn] = args;
 
       // returns a jest mock
@@ -142,7 +121,7 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
       });
     });
 
-    sample(asGenerator(setNameWithGeneric, types.number())).forEach(args => {
+    sample(setNameWithGeneric.$GEN(types.number())).forEach(args => {
       const [person] = args;
 
       expectType(person.name, `string`);

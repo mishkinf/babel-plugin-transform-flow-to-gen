@@ -91,11 +91,11 @@ export default function typeAST(path, optional = false) {
       const value = typeAST(path.typeAnnotation);
       return {...base, value};
     }
-    case 'void':
-    case 'function':
-    case 'string':
-    case 'number':
-    case 'boolean':
+    case `void`:
+    case `function`:
+    case `string`:
+    case `number`:
+    case `boolean`:
     default:
       return {...base};
   }

@@ -3,7 +3,7 @@ import transform from './transform';
 import GEN from './GEN_ID';
 
 const requireStatement = babel.template(
-  `require('babel-plugin-transform-flow-to-gen/lib/sample').default;`,
+  `require('babel-plugin-transform-flow-to-gen/lib/sampleOne').default;`,
 )();
 
 export default function transformType(name, typeAnnotation, typeParameters) {
@@ -13,8 +13,8 @@ export default function transformType(name, typeAnnotation, typeParameters) {
 
   return babel.template(`
     function ${name}(...args) {
-      var sample = REQUIRE;
-      return sample(${fnName}(...args), 1)[0];
+      var sampleOne = REQUIRE;
+      return sampleOne(${fnName}(...args));
     }
     FUNC;
     ${name}.${GEN} = ${fnName};

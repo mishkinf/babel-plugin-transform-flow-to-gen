@@ -9,6 +9,7 @@
     "test": "jest",
     "lint": "eslint --fix --ext .js src/",
     "prepublish": "rm -rf lib && babel src --out-dir lib --ignore __test__,test.js",
+    "postpublish": "rm -rf lib",
     "release": "np"
   },
   "dependencies": {

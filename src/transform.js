@@ -6,7 +6,7 @@ import typeAST from './typeAST';
 const {types: t} = babel;
 
 const requireStatement = babel.template(
-  `var ${GEN} = require('babel-plugin-transform-flow-to-gen/types');`,
+  `var ${GEN} = require('babel-plugin-transform-flow-to-gen/lib/typeHelpers');`,
 )();
 
 function typeParams(path) {

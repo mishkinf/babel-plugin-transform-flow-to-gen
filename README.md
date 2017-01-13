@@ -31,8 +31,7 @@ that create testcheck.js generators.
 ## Usage
 
 ```js
-import {sample} from 'babel-plugin-transform-flow-to-gen/sample';
-import * as types from 'babel-plugin-transform-flow-to-gen/types';
+import {sample, types} from 'babel-plugin-transform-flow-to-gen';
 
 type Person<T> = {
   firstName: string,

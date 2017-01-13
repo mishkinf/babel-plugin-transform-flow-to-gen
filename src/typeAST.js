@@ -18,18 +18,18 @@ const handleSpecialGeneric = (name, typeParameters, optional) => {
     case `$Gen`:
       return {type: `generator`, optional, name: params[1].id.name};
     case `$Keys`: {
-      const typeAlias = createTypeAST(params[0]);
+      const typeAlias = typeAST(params[0]);
       return {type: `typeAliasKeys`, optional, typeAlias};
     }
     case `$Shape`: {
-      const typeAlias = createTypeAST(params[0]);
+      const typeAlias = typeAST(params[0]);
       return {type: `typeAliasShape`, optional, typeAlias};
     }
     case `$Subtype`: {
-      return createTypeAST(params[0]);
+      return typeAST(params[0]);
     }
     case `Array`: {
-      const elementType = createTypeAST(params[0]);
+      const elementType = typeAST(params[0]);
       return {type: `array`, optional, elementType};
     }
     case `Object`:
@@ -37,7 +37,7 @@ const handleSpecialGeneric = (name, typeParameters, optional) => {
   }
 };
 
-export default function createTypeAST(path, optional = false) {
+export default function typeAST(path, optional = false) {
   const type = path.type.replace(`TypeAnnotation`, ``).toLowerCase();
   const base = {type, optional};
 
@@ -52,7 +52,7 @@ export default function createTypeAST(path, optional = false) {
 
       const args =
         (typeParameters && typeParameters.params) ?
-          typeParameters.params.map(p => createTypeAST(p)) :
+          typeParameters.params.map(p => typeAST(p)) :
           [];
 
       return {type: `typeAlias`, optional, name, args};
@@ -61,7 +61,7 @@ export default function createTypeAST(path, optional = false) {
       return path.properties.reduce((acc, prop) => {
         const key = prop.key.name;
         const opt = prop.optional;
-        const value = createTypeAST(prop.value, opt);
+        const value = typeAST(prop.value, opt);
         return {
           ...acc,
           members: {
@@ -72,7 +72,7 @@ export default function createTypeAST(path, optional = false) {
       }, {...base, members: {}});
     }
     case `array`: {
-      const elementType = createTypeAST(path.elementType);
+      const elementType = typeAST(path.elementType);
       return {...base, elementType};
     }
     case `booleanliteral`:
@@ -84,19 +84,18 @@ export default function createTypeAST(path, optional = false) {
     case `intersection`:
     case `tuple`:
     case `union`: {
-      const entries = path.types.map(p => createTypeAST(p));
+      const entries = path.types.map(p => typeAST(p));
       return {...base, entries};
     }
     case `nullable`: {
-      const value = createTypeAST(path.typeAnnotation);
+      const value = typeAST(path.typeAnnotation);
       return {...base, value};
     }
-    // case 'void':
-    // case 'function':
-    // case 'string':
-    // case 'number':
-    // case 'boolean':
-    // etc.
+    case 'void':
+    case 'function':
+    case 'string':
+    case 'number':
+    case 'boolean':
     default:
       return {...base};
   }

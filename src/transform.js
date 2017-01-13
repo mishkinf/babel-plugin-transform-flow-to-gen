@@ -1,7 +1,7 @@
 import * as babel from 'babel-core';
 import GEN from './GEN_ID';
-import createGenFromAST from './createGenFromAST';
-import createTypeAST from './createTypeAST';
+import genFromAST from './genFromAST';
+import typeAST from './typeAST';
 
 const {types: t} = babel;
 
@@ -33,13 +33,13 @@ function createParams(params) {
 }
 
 export default function transform(name, typeAnnotation, typeParameters) {
-  const type = createTypeAST(typeAnnotation);
+  const type = typeAST(typeAnnotation);
   const params = typeParams(typeParameters);
 
   return babel.template(`function NAME(...args) {REQUIRE; PARAMS; return GEN;}`)({
     NAME: t.identifier(name),
     REQUIRE: requireStatement,
     PARAMS: createParams(params),
-    GEN: createGenFromAST(type, params),
+    GEN: genFromAST(type, params),
   });
 }

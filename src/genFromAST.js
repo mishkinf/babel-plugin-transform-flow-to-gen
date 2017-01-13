@@ -29,7 +29,7 @@ function typeToGen(obj, params = []) {
         return babel.template(`${GEN}.typeAlias(CALL, ARGS)`)({
           CALL: t.identifier(obj.name),
           ARGS: t.arrayExpression(
-            obj.args.map(a => createGenFromAST(a, params)),
+            obj.args.map(a => genFromAST(a, params)),
           ),
         }).expression;
       }
@@ -44,7 +44,7 @@ function typeToGen(obj, params = []) {
           keys.map(key =>
             t.objectProperty(
               t.identifier(key),
-              createGenFromAST(obj.members[key], params),
+              genFromAST(obj.members[key], params),
             ),
           ),
         ),
@@ -52,15 +52,15 @@ function typeToGen(obj, params = []) {
     }
     case `typeAliasKeys`:
       return babel.template(`${GEN}.array(${GEN}.keys(OBJ))`)({
-        OBJ: createGenFromAST(obj.typeAlias),
+        OBJ: genFromAST(obj.typeAlias),
       }).expression;
     case `typeAliasShape`:
       return babel.template(`${GEN}.shape(OBJ)`)({
-        OBJ: createGenFromAST(obj.typeAlias),
+        OBJ: genFromAST(obj.typeAlias),
       }).expression;
     case `array`:
       return babel.template(`${GEN}.array(VAL)`)({
-        VAL: createGenFromAST(obj.elementType, params),
+        VAL: genFromAST(obj.elementType, params),
       }).expression;
     case `literal`:
       return t.identifier(`${GEN}.literal(${JSON.stringify(obj.value)})`);
@@ -73,38 +73,36 @@ function typeToGen(obj, params = []) {
     case `union`:
       return babel.template(`${GEN}.union(ARR)`)({
         ARR: t.arrayExpression(
-          obj.entries.map(val => createGenFromAST(val, params)),
+          obj.entries.map(val => genFromAST(val, params)),
         ),
       }).expression;
 
     case `intersection`:
       return babel.template(`${GEN}.intersection(ARR)`)({
         ARR: t.arrayExpression(
-          obj.entries.map(val => createGenFromAST(val, params)),
+          obj.entries.map(val => genFromAST(val, params)),
         ),
       }).expression;
     case `tuple`:
       return babel.template(`${GEN}.tuple(ARR)`)({
         ARR: t.arrayExpression(
-          obj.entries.map(val => createGenFromAST(val, params)),
+          obj.entries.map(val => genFromAST(val, params)),
         ),
       }).expression;
     case `function`:
       return t.identifier(`${GEN}.mock()`);
     case `nullable`:
       return babel.template(`${GEN}.nullable(OBJ)`)({
-        OBJ: createGenFromAST(obj.value, params),
+        OBJ: genFromAST(obj.value, params),
       }).expression;
     default:
       return t.identifier(`${GEN}.undef()`);
   }
 }
 
-export default function createGenFromAST(obj, params) {
+export default function genFromAST(obj, params) {
   const gen = typeToGen(obj, params);
 
-  // this isn`t totally correct.
-  // key should optionally not be present as well.
   if (obj.optional === true) {
     return babel.template(`${GEN}.nullable(OBJ)`)({
       OBJ: gen,

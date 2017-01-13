@@ -61,6 +61,7 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
       expect(Array.isArray(critic.favoriteMovies)).toBeTruthy();
       expectType(critic.style, `object`);
       expect(critic.favoriteLetters).toEqual([`A`, `B`, `C`]);
+      expect(parseInt(critic.numberToLetter, 10)).toBeGreaterThan(-1);
 
       expect(Array.isArray(critic.someKeys)).toBeTruthy();
 

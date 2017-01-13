@@ -25,7 +25,7 @@ TODO:
 
 ## Demo?
 
-[DEMO!](https://demo-bhabhjfxho.now.sh/)
+[DEMO!](https://demo-ywibuugizo.now.sh)
 
 ## Getting Started
 

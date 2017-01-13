@@ -1,9 +1,15 @@
 declare module 'babel-plugin-transform-flow-to-gen' {
+  // only to be used in tests where we wreck the types
+  declare var exports: {
+    default: any
+  };
+}
+
+declare module 'babel-plugin-transform-flow-to-gen/api' {
   declare type $Gen<T, Gen> = T;
 
   // only to be used in tests where we wreck the types
   declare var exports: {
-    default: any,
     sample: any,
     sampleOne: any,
     types: any,

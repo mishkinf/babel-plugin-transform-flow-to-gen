@@ -81,6 +81,8 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
       isPerson(critic.friend);
 
       expect(critic.nothing).toEqual(null);
+      expect(critic.justANumber).toEqual(2);
+      expect(critic.numberSubtype).toEqual(1);
     });
 
     expect(foundMiscEyeColor).toEqual(true);

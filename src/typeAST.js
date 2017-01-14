@@ -76,7 +76,7 @@ export default function typeAST(path, optional = false) {
     case `nullliteral`:
       return {type: `literal`, optional, value: null};
     case `booleanliteral`:
-    case `numberliteral`:
+    case `numericliteral`:
     case `stringliteral`:
       return {type: `literal`, optional, value: path.value};
     case `intersection`:

@@ -63,5 +63,7 @@ export type Critic = {
   misc: $Shape<Misc>,
   friend: $Subtype<Person>,
   nothing: null,
-  nonsense: any
+  nonsense: any,
+  justANumber: 2,
+  numberSubtype: $Subtype<1>
 };

@@ -10,6 +10,16 @@ export default function (babel) {
     path.params.every(p => !!p.typeAnnotation)
   );
 
+  const isTopLevelExport = path => !!(
+    t.isExportDefaultDeclaration(path.parentPath) ||
+    t.isExportNamedDeclaration(path.parentPath) ||
+    (
+      t.isVariableDeclarator(path.parentPath) &&
+      t.isVariableDeclaration(path.parentPath.parentPath) &&
+      isTopLevelExport(path.parentPath.parentPath)
+    )
+  );
+
   const walkToRoot = path => {
     while (!t.isProgram(path.parentPath)) {
       // eslint-disable-next-line no-param-reassign
@@ -54,7 +64,7 @@ export default function (babel) {
       },
 
       FunctionDeclaration(path) {
-        if (allParamsAreTyped(path.node)) {
+        if (allParamsAreTyped(path.node) && isTopLevelExport(path)) {
           const name = path.node.id.name;
           const fn = transformFunction(name, path.node.params, path.node.typeParameters);
           const root = walkToRoot(path);
@@ -63,7 +73,7 @@ export default function (babel) {
       },
 
       FunctionExpression(path) {
-        if (allParamsAreTyped(path.node) && t.isVariableDeclarator(path.parentPath)) {
+        if (allParamsAreTyped(path.node) && isTopLevelExport(path) && t.isVariableDeclarator(path.parentPath)) {
           const {name} = path.parentPath.node.id;
           const fn = transformFunction(name, path.node.params, path.node.typeParameters);
           const root = walkToRoot(path);
@@ -72,7 +82,7 @@ export default function (babel) {
       },
 
       ArrowFunctionExpression(path) {
-        if (allParamsAreTyped(path.node) && !t.isCallExpression(path.parentPath)) {
+        if (allParamsAreTyped(path.node) && isTopLevelExport(path) && !t.isCallExpression(path.parentPath)) {
           const name = path.parentPath.node.id.name;
           const fn = transformFunction(name, path.node.params, path.node.typeParameters);
           const root = walkToRoot(path);

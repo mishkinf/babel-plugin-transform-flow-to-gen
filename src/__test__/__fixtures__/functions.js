@@ -37,3 +37,13 @@ export const setNameWithGeneric = <T>(person: Person<T>, name: string) => ({
   ...person,
   name,
 });
+
+export const someObject = {
+  a: () => {},
+  b: function B() {},
+  c: function C() {}
+};
+
+export const higherOrder = (a: string) => (b: string) => {};
+
+export default function defaultExport(b: string) {}

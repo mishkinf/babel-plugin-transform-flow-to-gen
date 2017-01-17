@@ -15,12 +15,16 @@ const isObject = obj => (
   toString.call(obj) === `[object Object]`
 );
 
-export const object = shape => {
+export const plainObject = shape => {
   if (!isObject(shape)) {
     error(`types.object did not receive object as it's argument.`);
   }
 
   return gen.object(shape);
+};
+
+export const indexedObject = (keyGen, valueGen) => {
+  return gen.object(keyGen, valueGen);
 };
 
 export const array = type => {
@@ -142,3 +146,17 @@ export const garbage = () => gen.any;
 
 export const empty = () =>
   gen.return({});
+
+export const combine = (fn, ...args) => {
+  function recurse(gens, vals) {
+    if (gens.length === 0) {
+      return literal(fn(...vals));
+    }
+
+    return gen.bind(gens[0], val =>
+      recurse(gens.slice(1), vals.concat(val))
+    );
+  }
+
+  return recurse(args, []);
+};

@@ -43,7 +43,7 @@ function typeToGen(obj, params = []) {
     case `object`: {
       const keys = Object.keys(obj.members);
 
-      return expression(`${GEN}.object(OBJ)`, {
+      const fromMembers = expression(`${GEN}.plainObject(OBJ)`, {
         OBJ: t.objectExpression(
           keys.map(key =>
             t.objectProperty(
@@ -52,6 +52,22 @@ function typeToGen(obj, params = []) {
             ),
           ),
         ),
+      });
+
+      if (obj.indexers.length === 0) {
+        return fromMembers;
+      }
+
+      const [indexer] = obj.indexers;
+
+      const fromIndexer = expression(`${GEN}.indexedObject(KEYS, VALUES)`, {
+        KEYS: genFromAST(indexer.key),
+        VALUES: genFromAST(indexer.value)
+      });
+
+      return expression(`${GEN}.combine((a, b) => Object.assign({}, a, b), MEMBERS, INDEXER)`, {
+        MEMBERS: fromMembers,
+        INDEXER: fromIndexer
       });
     }
     case `typeAliasKeys`:

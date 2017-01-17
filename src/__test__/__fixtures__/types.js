@@ -65,3 +65,11 @@ export type Critic = {
   justANumber: 2,
   numberSubtype: $Subtype<1>
 };
+
+export type FoodForMovies = {
+  [key: Food]: Movie
+};
+
+export type OtherIndexer = {
+  [derp: Food]: Movie
+};

@@ -27,7 +27,7 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
 
     sample(Person()).forEach(isPerson);
 
-    const other = types.object({
+    const other = types.plainObject({
       a: types.string(),
       b: types.boolean(),
     });
@@ -87,6 +87,21 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
 
     expect(foundMiscEyeColor).toEqual(true);
     expect(foundMiscHairColor).toEqual(true);
+  });
+
+  it(`works with indexers on objects`, () => {
+    const {FoodForMovies} = loadFixture(`types`);
+
+    sample(FoodForMovies()).forEach(obj => {
+      const keys = Object.keys(obj);
+
+      keys.forEach(key => {
+        const value = obj[key];
+
+        expect([`pizza`, `ice cream`, `tacos`]).toContain(key);
+        expect(['Inception', 'Jurassic Park', 'Wayne\'s World']).toContain(value);
+      });
+    });
   });
 
   it(`works with simple function types`, () => {

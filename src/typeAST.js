@@ -33,7 +33,7 @@ const handleSpecialGeneric = (name, typeParameters, optional) => {
       return {type: `array`, optional, elementType};
     }
     case `Object`:
-      return {type: `object`, optional, members: {}};
+      return {type: `object`, optional, members: {}, indexers: []};
   }
 };
 
@@ -58,18 +58,34 @@ export default function typeAST(path, optional = false) {
       return {type: `typeAlias`, optional, name, args};
     }
     case `object`: {
-      return path.properties.reduce((acc, prop) => {
+      const members = path.properties.reduce((acc, prop) => {
         const key = prop.key.name;
         const opt = prop.optional;
         const value = typeAST(prop.value, opt);
         return {
           ...acc,
-          members: {
-            ...acc.members,
-            [key]: value,
-          },
+          [key]: value,
         };
-      }, {...base, members: {}});
+      }, {});
+
+      const indexers = path.indexers.reduce((acc, index) => {
+        if (index.id.name !== 'key') {
+          return acc;
+        }
+
+        const indexer = {
+          key: typeAST(index.key),
+          value: typeAST(index.value)
+        };
+
+        return [...acc, indexer];
+      }, []);
+
+      return {
+        ...base,
+        members,
+        indexers
+      };
     }
     case `array`:
       return {...base, elementType: typeAST(path.elementType)};

@@ -5,9 +5,9 @@ import GEN from '../GEN_ID';
 describe(`typeHelpers`, () => {
   describe(`object`, () => {
     it(`returns a generated object`, () => {
-      const gen = types.object({
+      const gen = types.plainObject({
         firstName: types.string(),
-        friends: types.array(types.object({})),
+        friends: types.array(types.plainObject({})),
       });
 
       sample(gen).forEach(s => {
@@ -19,7 +19,7 @@ describe(`typeHelpers`, () => {
 
     it(`throws when it does not receive an object`, () => {
       expect(() => {
-        types.object();
+        types.plainObject();
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
     });
   });
@@ -102,8 +102,8 @@ describe(`typeHelpers`, () => {
   describe(`intersection`, () => {
     it(`returns a generated intersection of many types`, () => {
       const gen = types.intersection([
-        types.object({a: types.string(), b: types.string()}),
-        types.object({c: types.number(), d: types.boolean()}),
+        types.plainObject({a: types.string(), b: types.string()}),
+        types.plainObject({c: types.number(), d: types.boolean()}),
       ]);
 
       sample(gen).forEach(s => {
@@ -121,8 +121,8 @@ describe(`typeHelpers`, () => {
 
       expect(() => {
         types.intersection(
-          types.object({a: types.string(), b: types.string()}),
-          types.object({c: types.number(), d: types.boolean()}),
+          types.plainObject({a: types.string(), b: types.string()}),
+          types.plainObject({c: types.number(), d: types.boolean()}),
         );
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
     });
@@ -131,8 +131,8 @@ describe(`typeHelpers`, () => {
   describe(`tuple`, () => {
     it(`returns a generated tuple of types`, () => {
       const gen = types.tuple([
-        types.object({a: types.string(), b: types.string()}),
-        types.object({c: types.number(), d: types.boolean()}),
+        types.plainObject({a: types.string(), b: types.string()}),
+        types.plainObject({c: types.number(), d: types.boolean()}),
       ]);
 
       sample(gen).forEach(s => {
@@ -150,8 +150,8 @@ describe(`typeHelpers`, () => {
 
       expect(() => {
         types.tuple(
-          types.object({a: types.string(), b: types.string()}),
-          types.object({c: types.number(), d: types.boolean()}),
+          types.plainObject({a: types.string(), b: types.string()}),
+          types.plainObject({c: types.number(), d: types.boolean()}),
         );
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
     });
@@ -218,7 +218,7 @@ describe(`typeHelpers`, () => {
         d: types.string(),
       };
 
-      const gen = types.object(obj);
+      const gen = types.plainObject(obj);
       const samp = sample(types.keys(gen));
 
       samp.forEach(s => {

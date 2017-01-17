@@ -9,8 +9,6 @@ export function loadFixture(fileName) {
     plugins: [`syntax-flow`, plugin, `transform-flow-comments`],
   });
 
-  console.log(code)
-
   // hacky way to confirm that plugin is working
   let result;
   // eslint-disable-next-line no-eval

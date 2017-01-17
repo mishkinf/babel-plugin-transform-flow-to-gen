@@ -1,8 +1,6 @@
 // @flow
 
-// has to be relative to the file where this gets eval'd
-// eslint-disable-next-line import/no-unresolved, import/extensions
-import type {$Gen} from '../types';
+import type {$Gen} from 'babel-plugin-transform-flow-to-gen/Gen';
 
 export type Pizza = 'pizza';
 export type IceCream = 'ice cream';

@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-transform-flow-to-gen",
-  "version": "0.0.9",
+  "version": "0.0.10-0",
   "description": "Turn flow definitions into generator functions",
   "main": "lib/index.js",
   "author": "Gabe Scholz",

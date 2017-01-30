@@ -10,7 +10,7 @@ export default function transformType(name, typeAnnotation, typeParameters) {
   return babel.template(`
     FUNC;
     var ${name} = ${fnName};
-    ${name}.${GEN} = ${fnName};
+    ${name}.asGenerator = ${fnName};
   `)({
     FUNC: fn,
   });

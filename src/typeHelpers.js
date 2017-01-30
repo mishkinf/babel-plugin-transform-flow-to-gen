@@ -1,5 +1,4 @@
 import {gen} from 'testcheck';
-import GEN from './GEN_ID';
 
 const error = msg => {
   throw new Error(`babel-plugin-transform-flow-to-gen/types: ${msg}`);
@@ -121,11 +120,11 @@ export const nullable = type => {
 };
 
 export const typeAlias = (fn, args = []) => {
-  if (!fn || !isFunction(fn[GEN])) {
+  if (!fn || !isFunction(fn.asGenerator)) {
     error(`types.typeAlias expected a typeAlias as first argument. Instead got ${JSON.stringify(fn)}.`);
   }
 
-  return gen.bind(undef(), () => fn[GEN](...args));
+  return gen.bind(undef(), () => fn.asGenerator(...args));
 };
 
 export const generator = (type, mapFn) => {

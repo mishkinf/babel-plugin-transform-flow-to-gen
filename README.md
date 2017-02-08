@@ -20,7 +20,6 @@ TODO:
 - handle ExistentialTypeAnnotation
 - handle recursive types
 - handle Flow globally defined types
-- handle type alias indexers
 - handle React components
 
 ## Demo?

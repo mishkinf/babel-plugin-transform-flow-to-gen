@@ -127,9 +127,9 @@ export const typeAlias = (fn, args = []) => {
   return gen.bind(undef(), () => fn.asGenerator(...args));
 };
 
-export const generator = (type, mapFn) => {
+export const map = (type, mapFn) => {
   if (!isFunction(mapFn)) {
-    error(`types.generator expected a generator function as first argument. Instead got ${JSON.stringify(mapFn)}.`);
+    error(`types.:ap expected a generator function as first argument. Instead got ${JSON.stringify(mapFn)}.`);
   }
 
   return gen.map(mapFn, type);

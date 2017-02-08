@@ -249,14 +249,14 @@ describe(`typeHelpers`, () => {
     });
   });
 
-  describe(`generator`, () => {
+  describe(`map`, () => {
     it(`throws when the type isn't a function`, () => {
       expect(() => {
-        types.generator();
+        types.map();
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
 
       expect(() => {
-        types.generator({});
+        types.map({});
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
     });
   });

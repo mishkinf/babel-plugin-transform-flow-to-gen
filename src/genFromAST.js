@@ -9,7 +9,7 @@ const expression = (str, args) =>
 function typeToGen(obj, params = []) {
   switch (obj.type) {
     case `generator`: {
-      return expression(`${GEN}.generator(ARG, CALL)`, {
+      return expression(`${GEN}.map(ARG, CALL)`, {
         ARG: genFromAST(obj.typeAlias, params),
         CALL: t.identifier(obj.name),
       });

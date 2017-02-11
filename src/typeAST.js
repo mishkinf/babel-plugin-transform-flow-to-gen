@@ -1,40 +1,22 @@
-const SPECIAL_GENERICS = [
-  `Array`,
-  `Object`,
-  `$Gen`,
-  `$Keys`,
-  `$Shape`,
-  `$Subtype`,
-];
-
-const isSpecialGeneric = name => SPECIAL_GENERICS.indexOf(name) > -1;
-
-// eslint-disable-next-line consistent-return
-const handleSpecialGeneric = (name, typeParameters, optional) => {
-  const params = (typeParameters && typeParameters.params) || [];
-
-  // eslint-disable-next-line default-case
-  switch (name) {
-    case `$Gen`:
-      return {type: `generator`, optional, typeAlias: typeAST(params[0]), name: params[1].id.name};
-    case `$Keys`: {
-      const typeAlias = typeAST(params[0]);
-      return {type: `typeAliasKeys`, optional, typeAlias};
-    }
-    case `$Shape`: {
-      const typeAlias = typeAST(params[0]);
-      return {type: `typeAliasShape`, optional, typeAlias};
-    }
-    case `$Subtype`: {
-      return typeAST(params[0]);
-    }
-    case `Array`: {
-      const elementType = typeAST(params[0]);
-      return {type: `array`, optional, elementType};
-    }
-    case `Object`:
-      return {type: `object`, optional, members: {}, indexers: []};
-  }
+const SPECIAL_GENERICS = {
+  Array(params) {
+    return {type: `array`, elementType: params[0]};
+  },
+  Object(params) {
+    return {type: `object`, members: {}, indexers: []};
+  },
+  $Gen(params) {
+    return {type: `generator`, typeAlias: params[0], caller: params[1].name};
+  },
+  $Keys(params) {
+    return {type: `typeAliasKeys`, typeAlias: params[0]};
+  },
+  $Shape(params) {
+    return {type: `typeAliasShape`, typeAlias: params[0]};
+  },
+  $Subtype(params) {
+    return params[0];
+  },
 };
 
 export default function typeAST(path, optional = false) {
@@ -46,16 +28,16 @@ export default function typeAST(path, optional = false) {
       const {typeParameters} = path;
       const name = path.id.name;
 
-      if (isSpecialGeneric(name)) {
-        return handleSpecialGeneric(name, typeParameters, optional);
-      }
-
       const args =
         (typeParameters && typeParameters.params) ?
           typeParameters.params.map(p => typeAST(p)) :
           [];
 
-      return {type: `typeAlias`, optional, name, args};
+      if (Boolean(SPECIAL_GENERICS[name])) {
+        return {...SPECIAL_GENERICS[name](args), optional};
+      } else {
+        return {type: `typeAlias`, optional, name, args};
+      }
     }
     case `object`: {
       const members = path.properties.reduce((acc, prop) => {
@@ -110,6 +92,6 @@ export default function typeAST(path, optional = false) {
     // case `number`:
     // case `boolean`:
     default:
-      return {...base};
+      return base;
   }
 }

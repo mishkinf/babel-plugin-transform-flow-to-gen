@@ -11,7 +11,7 @@ function typeToGen(obj, params = []) {
     case `generator`: {
       return expression(`${GEN}.map(ARG, CALL)`, {
         ARG: genFromAST(obj.typeAlias, params),
-        CALL: t.identifier(obj.name),
+        CALL: t.identifier(obj.caller),
       });
     }
     case `typeAlias`: {

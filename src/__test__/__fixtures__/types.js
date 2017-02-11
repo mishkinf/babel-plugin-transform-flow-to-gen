@@ -45,6 +45,8 @@ const alwaysABC = () => [`A`, `B`, `C`];
 
 const convertToLengthString = str => str.length.toString();
 
+const addPrefix = str => `v${str}`;
+
 type SomeKeys = {
   A: string,
   BB: string,
@@ -52,11 +54,14 @@ type SomeKeys = {
   DDDD: string
 };
 
+type Version = string;
+
 export type Critic = {
   favoriteMovies: Array<Movie>,
   style: Object,
   favoriteLetters: $Gen<string[], alwaysABC>,
   numberToLetter: $Gen<string, convertToLengthString>,
+  version: $Gen<Version, addPrefix>,
   someKeys: $Keys<SomeKeys>,
   misc: $Shape<Misc>,
   friend: $Subtype<Person>,
@@ -73,3 +78,7 @@ export type FoodForMovies = {
 export type OtherIndexer = {
   [derp: Food]: Movie
 };
+
+export type RecursiveThing = {
+  recurse: RecursiveThing
+}

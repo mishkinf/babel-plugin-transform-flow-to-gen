@@ -22,9 +22,16 @@ const isPerson = person => {
 };
 
 describe(`babel-plugin-transform-flow-to-gen`, () => {
-  it(`works with simple types`, () => {
-    const {Person, Job, Worker} = loadFixture(`types`);
+  const {
+    Critic,
+    FoodForMovies,
+    Job,
+    Person,
+    RecursiveThing,
+    Worker
+  } = loadFixture(`types`);
 
+  it(`works with simple types`, () => {
     sample(Person()).forEach(isPerson);
 
     const other = types.plainObject({
@@ -51,14 +58,14 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
   });
 
   it(`handles special generics appropriately`, () => {
-    const {Critic} = loadFixture(`types`);
-
     let foundMiscEyeColor = false;
     let foundMiscHairColor = false;
 
     sample(Critic()).forEach(critic => {
       expect(Array.isArray(critic.favoriteMovies)).toBeTruthy();
       expectType(critic.style, `object`);
+      expectType(critic.version, `string`);
+      expect(critic.version[0], `v`);
       expect(critic.favoriteLetters).toEqual([`A`, `B`, `C`]);
       expect(parseInt(critic.numberToLetter, 10)).toBeGreaterThan(-1);
 
@@ -90,8 +97,6 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
   });
 
   it(`works with indexers on objects`, () => {
-    const {FoodForMovies} = loadFixture(`types`);
-
     sample(FoodForMovies()).forEach(obj => {
       const keys = Object.keys(obj);
 
@@ -147,5 +152,9 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
       expectType(person.age, `number`);
       expectType(person.other, `number`);
     });
+  });
+
+  it(`can generate data from recursive types`, () => {
+  
   });
 });

@@ -42,18 +42,22 @@ export default function (babel) {
 
       ExportNamedDeclaration(path) {
         if (path.node.exportKind === `type`) {
-          const {declaration} = path.node;
+          const {declaration, specifiers} = path.node;
 
-          const namedExport = {
-            type: `ExportNamedDeclaration`,
-            specifiers: [t.exportSpecifier(
-              declaration.id,
-              declaration.id,
-            )],
-            exportKind: `value`,
-          };
+          path.node.exportKind = `value`;
 
-          path.replaceWithMultiple([declaration, namedExport]);
+          if (declaration) {
+            const namedExport = {
+              type: `ExportNamedDeclaration`,
+              specifiers: [t.exportSpecifier(
+                declaration.id,
+                declaration.id,
+              )],
+              exportKind: `value`,
+            };
+
+            path.replaceWithMultiple([declaration, namedExport]);
+          }
         }
       },
 

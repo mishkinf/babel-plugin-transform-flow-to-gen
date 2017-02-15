@@ -22,6 +22,8 @@ const isPerson = person => {
 };
 
 describe(`babel-plugin-transform-flow-to-gen`, () => {
+  const typesFixture = loadFixture(`types`);
+
   const {
     Critic,
     FoodForMovies,
@@ -29,7 +31,7 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
     Person,
     RecursiveThing,
     Worker
-  } = loadFixture(`types`);
+  } = typesFixture;
 
   it(`works with simple types`, () => {
     sample(Person()).forEach(isPerson);
@@ -154,7 +156,9 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
     });
   });
 
-  it(`can generate data from recursive types`, () => {
-  
+  it(`can pass along re-exported types`, () => {
+    expect(typesFixture.hasOwnProperty('Pizza')).toEqual(true);
+    expect(typesFixture.hasOwnProperty('IceCream')).toEqual(true);
+    expect(typesFixture.hasOwnProperty('Tacos')).toEqual(true);
   });
 });

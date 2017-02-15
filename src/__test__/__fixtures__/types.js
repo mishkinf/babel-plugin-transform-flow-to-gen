@@ -1,10 +1,9 @@
 // @flow
 
 import type {$Gen} from 'babel-plugin-transform-flow-to-gen/Gen';
-
-export type Pizza = 'pizza';
-export type IceCream = 'ice cream';
-export type Tacos = 'tacos';
+type Pizza = 'pizza';
+type IceCream = 'ice cream';
+type Tacos = 'tacos';
 
 export type Food = Pizza | IceCream | Tacos;
 
@@ -82,3 +81,7 @@ export type OtherIndexer = {
 export type RecursiveThing = {
   recurse: RecursiveThing
 }
+
+/* make sure that this works. it won't resolve to anything
+ * because we're not transpiling the connected files */
+export type {Pizza, IceCream, Tacos} from './__fixtures__/nestedTypes';

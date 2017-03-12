@@ -6,9 +6,7 @@ export const combine = (fn, ...args) => {
       return literal(fn(...vals));
     }
 
-    return gen.bind(gens[0], val =>
-      recurse(gens.slice(1), vals.concat(val))
-    );
+    return gen.bind(gens[0], val => recurse(gens.slice(1), vals.concat(val)));
   }
 
   return recurse(args, []);

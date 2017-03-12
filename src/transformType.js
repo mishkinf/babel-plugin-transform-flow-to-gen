@@ -7,11 +7,13 @@ export default function transformType(name, typeAnnotation, typeParameters) {
 
   const fn = transform(fnName, typeAnnotation, typeParameters);
 
-  return babel.template(`
+  return babel.template(
+    `
     FUNC;
     var ${name} = ${fnName};
     ${name}.asGenerator = ${fnName};
-  `)({
+  `,
+  )({
     FUNC: fn,
   });
 }

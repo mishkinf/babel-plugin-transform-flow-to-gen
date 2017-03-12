@@ -10,7 +10,8 @@
     "lint": "eslint --fix --ext .js src/",
     "prepublish": "rm -rf lib && babel src --out-dir lib --ignore __test__,test.js",
     "postpublish": "rm -rf lib",
-    "release": "np"
+    "release": "np",
+    "prettier": "prettier --single-quote --bracket-spacing=false --trailing-comma=all --parser=flow --print-width=100 --write **/*.js"
   },
   "dependencies": {
     "babel-plugin-syntax-flow": "^6.18.0",
@@ -31,7 +32,8 @@
     "eslint-config-airbnb-base": "^11.0.0",
     "eslint-plugin-import": "^2.2.0",
     "jest": "^18.1.0",
-    "np": "^2.12.0"
+    "np": "^2.12.0",
+    "prettier": "^0.22.0"
   },
   "babel": {
     "presets": [

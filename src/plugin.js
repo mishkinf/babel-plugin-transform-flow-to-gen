@@ -1,24 +1,18 @@
 import transformType from './transformType';
 import transformFunction from './transformFunction';
 
-export default function (babel) {
+export default function(babel) {
   const {types: t} = babel;
 
-  const allParamsAreTyped = path => !!(
-    path.params &&
-    path.params.length > 0 &&
-    path.params.every(p => !!p.typeAnnotation)
-  );
+  const allParamsAreTyped = path =>
+    !!(path.params && path.params.length > 0 && path.params.every(p => !!p.typeAnnotation));
 
-  const isTopLevelExport = path => !!(
-    t.isExportDefaultDeclaration(path.parentPath) ||
-    t.isExportNamedDeclaration(path.parentPath) ||
-    (
-      t.isVariableDeclarator(path.parentPath) &&
-      t.isVariableDeclaration(path.parentPath.parentPath) &&
-      isTopLevelExport(path.parentPath.parentPath)
-    )
-  );
+  const isTopLevelExport = path =>
+    !!(t.isExportDefaultDeclaration(path.parentPath) ||
+      t.isExportNamedDeclaration(path.parentPath) ||
+      (t.isVariableDeclarator(path.parentPath) &&
+        t.isVariableDeclaration(path.parentPath.parentPath) &&
+        isTopLevelExport(path.parentPath.parentPath)));
 
   const walkToRoot = path => {
     while (!t.isProgram(path.parentPath)) {
@@ -49,10 +43,7 @@ export default function (babel) {
           if (declaration) {
             const namedExport = {
               type: `ExportNamedDeclaration`,
-              specifiers: [t.exportSpecifier(
-                declaration.id,
-                declaration.id,
-              )],
+              specifiers: [t.exportSpecifier(declaration.id, declaration.id)],
               exportKind: `value`,
             };
 
@@ -77,7 +68,11 @@ export default function (babel) {
       },
 
       FunctionExpression(path) {
-        if (allParamsAreTyped(path.node) && isTopLevelExport(path) && t.isVariableDeclarator(path.parentPath)) {
+        if (
+          allParamsAreTyped(path.node) &&
+          isTopLevelExport(path) &&
+          t.isVariableDeclarator(path.parentPath)
+        ) {
           const {name} = path.parentPath.node.id;
           const fn = transformFunction(name, path.node.params, path.node.typeParameters);
           const root = walkToRoot(path);
@@ -86,7 +81,11 @@ export default function (babel) {
       },
 
       ArrowFunctionExpression(path) {
-        if (allParamsAreTyped(path.node) && isTopLevelExport(path) && !t.isCallExpression(path.parentPath)) {
+        if (
+          allParamsAreTyped(path.node) &&
+          isTopLevelExport(path) &&
+          !t.isCallExpression(path.parentPath)
+        ) {
           const name = path.parentPath.node.id.name;
           const fn = transformFunction(name, path.node.params, path.node.typeParameters);
           const root = walkToRoot(path);

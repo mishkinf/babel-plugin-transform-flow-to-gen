@@ -28,10 +28,9 @@ export default function typeAST(path, optional = false) {
       const {typeParameters} = path;
       const name = path.id.name;
 
-      const args =
-        (typeParameters && typeParameters.params) ?
-          typeParameters.params.map(p => typeAST(p)) :
-          [];
+      const args = typeParameters && typeParameters.params
+        ? typeParameters.params.map(p => typeAST(p))
+        : [];
 
       if (Boolean(SPECIAL_GENERICS[name])) {
         return {...SPECIAL_GENERICS[name](args), optional};
@@ -40,33 +39,39 @@ export default function typeAST(path, optional = false) {
       }
     }
     case `object`: {
-      const members = path.properties.reduce((acc, prop) => {
-        const key = prop.key.name;
-        const opt = prop.optional;
-        const value = typeAST(prop.value, opt);
-        return {
-          ...acc,
-          [key]: value,
-        };
-      }, {});
+      const members = path.properties.reduce(
+        (acc, prop) => {
+          const key = prop.key.name;
+          const opt = prop.optional;
+          const value = typeAST(prop.value, opt);
+          return {
+            ...acc,
+            [key]: value,
+          };
+        },
+        {},
+      );
 
-      const indexers = path.indexers.reduce((acc, index) => {
-        if (index.id.name !== 'key') {
-          return acc;
-        }
+      const indexers = path.indexers.reduce(
+        (acc, index) => {
+          if (index.id.name !== 'key') {
+            return acc;
+          }
 
-        const indexer = {
-          key: typeAST(index.key),
-          value: typeAST(index.value)
-        };
+          const indexer = {
+            key: typeAST(index.key),
+            value: typeAST(index.value),
+          };
 
-        return [...acc, indexer];
-      }, []);
+          return [...acc, indexer];
+        },
+        [],
+      );
 
       return {
         ...base,
         members,
-        indexers
+        indexers,
       };
     }
     case `array`:

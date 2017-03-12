@@ -10,19 +10,19 @@ module.exports = {
         test: /\.js$/,
         include: path.join(__dirname, `src`),
         exclude: /node_modules/,
-        loader: 'babel-loader'
-      }
-    ]
+        loader: 'babel-loader',
+      },
+    ],
   },
   plugins: [
     new HtmlWebpackPlugin({
       inject: true,
-      template: path.join(__dirname, `public/index.html`)
-    })
+      template: path.join(__dirname, `public/index.html`),
+    }),
   ],
   devServer: {
     contentBase: __dirname,
     compress: true,
-    port: 3000
-  }
+    port: 3000,
+  },
 };

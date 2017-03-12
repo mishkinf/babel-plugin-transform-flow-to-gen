@@ -8,11 +8,8 @@ const toString = Object.prototype.toString;
 
 const isUndefined = obj => typeof obj === `undefined`;
 const isFunction = obj => typeof obj === `function`;
-const isObject = obj => (
-  !Array.isArray(obj) &&
-  typeof obj === `object` &&
-  toString.call(obj) === `[object Object]`
-);
+const isObject = obj =>
+  !Array.isArray(obj) && typeof obj === `object` && toString.call(obj) === `[object Object]`;
 
 export const plainObject = shape => {
   if (!isObject(shape)) {
@@ -42,14 +39,11 @@ export const literal = obj => {
   return gen.return(obj);
 };
 
-export const boolean = () =>
-  gen.boolean;
+export const boolean = () => gen.boolean;
 
-export const string = (size = 20) =>
-  gen.resize(size, gen.alphaNumString);
+export const string = (size = 20) => gen.resize(size, gen.alphaNumString);
 
-export const number = () =>
-  gen.int;
+export const number = () => gen.int;
 
 export const union = arr => {
   if (!Array.isArray(arr)) {
@@ -64,10 +58,10 @@ export const intersection = arr => {
     error(`types.intersection expected array as argument.`);
   }
 
-  return arr.reduce((interGen, typeGen) =>
-    gen.bind(interGen, inter =>
-      gen.map(type => Object.assign({}, inter, type), typeGen),
-    ), gen.return({}),
+  return arr.reduce(
+    (interGen, typeGen) =>
+      gen.bind(interGen, inter => gen.map(type => Object.assign({}, inter, type), typeGen)),
+    gen.return({}),
   );
 };
 
@@ -76,10 +70,10 @@ export const tuple = arr => {
     error(`types.tuple expected array as argument.`);
   }
 
-  return arr.reduce((interGen, typeGen) =>
-    gen.bind(interGen, inter =>
-      gen.map(type => inter.concat(type), typeGen),
-    ), gen.return([]),
+  return arr.reduce(
+    (interGen, typeGen) =>
+      gen.bind(interGen, inter => gen.map(type => inter.concat(type), typeGen)),
+    gen.return([]),
   );
 };
 
@@ -100,14 +94,16 @@ export const keys = type => {
 
 export const shape = type =>
   gen.bind(array(keys(type)), keyss =>
-    gen.map(obj => {
-      if (!isObject(obj)) {
-        error(`types.shape expected a object generator.`);
-      }
+    gen.map(
+      obj => {
+        if (!isObject(obj)) {
+          error(`types.shape expected a object generator.`);
+        }
 
-      return keyss.reduce((acc, key) => Object.assign({}, acc, {[key]: obj[key]}), obj);
-    }, type),
-  );
+        return keyss.reduce((acc, key) => Object.assign({}, acc, {[key]: obj[key]}), obj);
+      },
+      type,
+    ));
 
 export const undef = () => gen.undefined;
 
@@ -121,7 +117,9 @@ export const nullable = type => {
 
 export const typeAlias = (fn, args = []) => {
   if (!fn || !isFunction(fn.asGenerator)) {
-    error(`types.typeAlias expected a typeAlias as first argument. Instead got ${JSON.stringify(fn)}.`);
+    error(
+      `types.typeAlias expected a typeAlias as first argument. Instead got ${JSON.stringify(fn)}.`,
+    );
   }
 
   return gen.bind(undef(), () => fn.asGenerator(...args));
@@ -129,22 +127,25 @@ export const typeAlias = (fn, args = []) => {
 
 export const map = (type, mapFn) => {
   if (!isFunction(mapFn)) {
-    error(`types.:ap expected a generator function as first argument. Instead got ${JSON.stringify(mapFn)}.`);
+    error(
+      `types.:ap expected a generator function as first argument. Instead got ${JSON.stringify(mapFn)}.`,
+    );
   }
 
   return gen.map(mapFn, type);
 };
 
 export const mock = () =>
-  gen.bind(undef(), () =>
-    // use a jest mock if this is being run with jest
-    (typeof jest === `object` ? gen.return(jest.fn()) : gen.return(() => {})),
+  gen.bind(
+    undef(),
+    () =>
+      // use a jest mock if this is being run with jest
+      typeof jest === `object` ? gen.return(jest.fn()) : gen.return(() => {}),
   );
 
 export const garbage = () => gen.any;
 
-export const empty = () =>
-  gen.return({});
+export const empty = () => gen.return({});
 
 export const combine = (fn, ...args) => {
   function recurse(gens, vals) {
@@ -152,9 +153,7 @@ export const combine = (fn, ...args) => {
       return literal(fn(...vals));
     }
 
-    return gen.bind(gens[0], val =>
-      recurse(gens.slice(1), vals.concat(val))
-    );
+    return gen.bind(gens[0], val => recurse(gens.slice(1), vals.concat(val)));
   }
 
   return recurse(args, []);

@@ -5,9 +5,7 @@ import GEN from './GEN_ID';
 const {types: t} = babel;
 
 export default function transformFunction(name, funcParams = [], typeParameters) {
-  const args = t.tupleTypeAnnotation(
-    funcParams.map(a => a.typeAnnotation.typeAnnotation),
-  );
+  const args = t.tupleTypeAnnotation(funcParams.map(a => a.typeAnnotation.typeAnnotation));
 
   const fnName = `${GEN}__${name}`;
 

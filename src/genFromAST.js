@@ -3,8 +3,7 @@ import GEN from './GEN_ID';
 
 const {types: t} = babel;
 
-const expression = (str, args) =>
-  babel.template(str)(args).expression;
+const expression = (str, args) => babel.template(str)(args).expression;
 
 function typeToGen(obj, params = []) {
   switch (obj.type) {
@@ -32,9 +31,7 @@ function typeToGen(obj, params = []) {
         // wrap in a gen.bind so that recursion is lazy
         return expression(`${GEN}.typeAlias(CALL, ARGS)`, {
           CALL: t.identifier(obj.name),
-          ARGS: t.arrayExpression(
-            obj.args.map(a => genFromAST(a, params)),
-          ),
+          ARGS: t.arrayExpression(obj.args.map(a => genFromAST(a, params))),
         });
       }
 
@@ -46,11 +43,7 @@ function typeToGen(obj, params = []) {
       const fromMembers = expression(`${GEN}.plainObject(OBJ)`, {
         OBJ: t.objectExpression(
           keys.map(key =>
-            t.objectProperty(
-              t.identifier(key),
-              genFromAST(obj.members[key], params),
-            ),
-          ),
+            t.objectProperty(t.identifier(key), genFromAST(obj.members[key], params))),
         ),
       });
 
@@ -62,12 +55,12 @@ function typeToGen(obj, params = []) {
 
       const fromIndexer = expression(`${GEN}.indexedObject(KEYS, VALUES)`, {
         KEYS: genFromAST(indexer.key),
-        VALUES: genFromAST(indexer.value)
+        VALUES: genFromAST(indexer.value),
       });
 
       return expression(`${GEN}.combine((a, b) => Object.assign({}, a, b), MEMBERS, INDEXER)`, {
         MEMBERS: fromMembers,
-        INDEXER: fromIndexer
+        INDEXER: fromIndexer,
       });
     }
     case `typeAliasKeys`:
@@ -92,22 +85,16 @@ function typeToGen(obj, params = []) {
       return t.identifier(`${GEN}.number()`);
     case `union`:
       return expression(`${GEN}.union(ARR)`, {
-        ARR: t.arrayExpression(
-          obj.entries.map(val => genFromAST(val, params)),
-        ),
+        ARR: t.arrayExpression(obj.entries.map(val => genFromAST(val, params))),
       });
 
     case `intersection`:
       return expression(`${GEN}.intersection(ARR)`, {
-        ARR: t.arrayExpression(
-          obj.entries.map(val => genFromAST(val, params)),
-        ),
+        ARR: t.arrayExpression(obj.entries.map(val => genFromAST(val, params))),
       });
     case `tuple`:
       return expression(`${GEN}.tuple(ARR)`, {
-        ARR: t.arrayExpression(
-          obj.entries.map(val => genFromAST(val, params)),
-        ),
+        ARR: t.arrayExpression(obj.entries.map(val => genFromAST(val, params))),
       });
     case `function`:
       return t.identifier(`${GEN}.mock()`);

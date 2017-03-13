@@ -4,7 +4,7 @@ _Transforms Flow annotations into TestCheck generators for randomized testing_
 
 ## Motivation
 
-Read [this blog post](/)
+Read [this blog post](https://medium.com/@gabescholz/randomized-testing-in-javascript-without-lifting-a-finger-8d616d7048af)
 
 ## Demo?
 

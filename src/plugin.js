@@ -58,7 +58,8 @@ export default function(babel) {
           const name = path.node.id.name;
           const fn = transformFunction(name, path.node.params, path.node.typeParameters);
           const root = walkToScope(path);
-          root.insertAfter(fn);
+          const nodes = [root.node].concat(fn);
+          root.replaceWithMultiple(nodes);
         }
       },
 
@@ -71,7 +72,8 @@ export default function(babel) {
           const {name} = path.parentPath.node.id;
           const fn = transformFunction(name, path.node.params, path.node.typeParameters);
           const root = walkToScope(path);
-          root.insertAfter(fn);
+          const nodes = [root.node].concat(fn);
+          root.replaceWithMultiple(nodes);
         }
 
         if (t.isReturnStatement(path.parentPath)) {
@@ -93,7 +95,8 @@ export default function(babel) {
           const name = path.parentPath.node.id.name;
           const fn = transformFunction(name, path.node.params, path.node.typeParameters);
           const root = walkToScope(path);
-          root.insertAfter(fn);
+          const nodes = [root.node].concat(fn);
+          root.replaceWithMultiple(nodes);
         }
       },
     },

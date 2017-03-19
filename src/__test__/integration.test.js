@@ -30,7 +30,7 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
     Job,
     Person,
     RecursiveThing,
-    Worker
+    Worker,
   } = typesFixture;
 
   it(`works with simple types`, () => {
@@ -106,7 +106,7 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
         const value = obj[key];
 
         expect([`pizza`, `ice cream`, `tacos`]).toContain(key);
-        expect(['Inception', 'Jurassic Park', 'Wayne\'s World']).toContain(value);
+        expect([`Inception`, `Jurassic Park`, `Wayne's World`]).toContain(value);
       });
     });
   });
@@ -157,16 +157,16 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
   });
 
   it(`can pass along re-exported types`, () => {
-    expect(typesFixture.hasOwnProperty('Pizza')).toEqual(true);
-    expect(typesFixture.hasOwnProperty('IceCream')).toEqual(true);
-    expect(typesFixture.hasOwnProperty('Tacos')).toEqual(true);
+    expect(typesFixture.hasOwnProperty(`Pizza`)).toEqual(true);
+    expect(typesFixture.hasOwnProperty(`IceCream`)).toEqual(true);
+    expect(typesFixture.hasOwnProperty(`Tacos`)).toEqual(true);
   });
 
   it(`can add generators to nested functions`, () => {
     const {
       higherOrder,
       nestedFunction,
-      otherNestedFunction
+      otherNestedFunction,
     } = loadFixture(`functions`);
 
     expectType(higherOrder.asGenerator, `function`);
@@ -176,5 +176,5 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
     expectType(nestedFunction().asGenerator, `function`);
     expectType(otherNestedFunction().a.asGenerator, `function`);
     expectType(otherNestedFunction().b.asGenerator, `function`);
-  })
+  });
 });

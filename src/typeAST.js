@@ -32,7 +32,7 @@ export default function typeAST(path, optional = false) {
         ? typeParameters.params.map(p => typeAST(p))
         : [];
 
-      if (Boolean(SPECIAL_GENERICS[name])) {
+      if (SPECIAL_GENERICS[name]) {
         return {...SPECIAL_GENERICS[name](args), optional};
       } else {
         return {type: `typeAlias`, optional, name, args};
@@ -54,7 +54,7 @@ export default function typeAST(path, optional = false) {
 
       const indexers = path.indexers.reduce(
         (acc, index) => {
-          if (index.id.name !== 'key') {
+          if (index.id.name !== `key`) {
             return acc;
           }
 
@@ -90,7 +90,7 @@ export default function typeAST(path, optional = false) {
       return {...base, value: typeAST(path.typeAnnotation)};
     case `any`:
     case `mixed`:
-      return {type: 'garbage', optional};
+      return {type: `garbage`, optional};
     // case `void`:
     // case `function`:
     // case `string`:

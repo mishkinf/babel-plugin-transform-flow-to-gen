@@ -19,9 +19,7 @@ export const plainObject = shape => {
   return gen.object(shape);
 };
 
-export const indexedObject = (keyGen, valueGen) => {
-  return gen.object(keyGen, valueGen);
-};
+export const indexedObject = (keyGen, valueGen) => gen.object(keyGen, valueGen);
 
 export const array = type => {
   if (isUndefined(type)) {

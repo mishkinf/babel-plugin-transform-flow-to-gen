@@ -164,10 +164,14 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
 
   it(`can add generators to nested functions`, () => {
     const {
+      higherOrder,
       nestedFunction,
       otherNestedFunction
     } = loadFixture(`functions`);
 
+    expectType(higherOrder.asGenerator, `function`);
+    expectType(higherOrder().asGenerator, `function`);
+    expect(higherOrder()(), `lol`);
     expectType(nestedFunction.asGenerator, `function`);
     expectType(nestedFunction().asGenerator, `function`);
     expectType(otherNestedFunction().a.asGenerator, `function`);

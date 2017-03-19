@@ -44,7 +44,7 @@ export const someObject = {
   c: function C(a: string) {}
 };
 
-export const higherOrder = (a: string) => (b: string) => {};
+export const higherOrder = (a: string) => (b: string) => { return 'lol' };
 
 export function nestedFunction(_: string) {
   return function(a: string, b: number) {

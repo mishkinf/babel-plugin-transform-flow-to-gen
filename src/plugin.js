@@ -87,17 +87,18 @@ export default function(babel) {
       },
 
       ArrowFunctionExpression(path) {
-        if (
-          allParamsAreTyped(path.node) &&
-          path.parentPath.node.id &&
-          !t.isCallExpression(path.parentPath)
-        ) {
-          const name = path.parentPath.node.id.name;
-          const fn = transformFunction(name, path.node.params, path.node.typeParameters);
-          const root = walkToScope(path);
-          const nodes = [root.node].concat(fn);
-          root.replaceWithMultiple(nodes);
+        const id = t.identifier(nextName());
+        const params = path.get('params').map(p => p.node);
+        let body = path.get('body').node;
+
+        if (!t.isBlockStatement(body)) {
+          body = t.blockStatement([t.returnStatement(body)])
         }
+
+        const exp = t.functionExpression(id, params, body);
+        exp.typeParameters = path.get('typeParameters').node;
+
+        path.replaceWith(exp);
       },
     },
   };

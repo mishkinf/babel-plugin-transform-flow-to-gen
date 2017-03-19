@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+
 import GEN from './GEN_ID';
 import transformType from './transformType';
 import transformFunction from './transformFunction';
@@ -17,7 +19,10 @@ export default function (babel) {
   };
 
   let nameCount = 0;
-  const nextName = () => `${GEN}_EXP_${nameCount++}__`;
+  const nextName = () => {
+    nameCount += 1;
+    return `${GEN}_EXP_${nameCount}__`;
+  };
 
   return {
     inherits: require(`babel-plugin-syntax-flow`),
@@ -27,7 +32,6 @@ export default function (babel) {
         const node = path.node;
 
         if (node.importKind === `type`) {
-          // eslint-disable-next-line no-param-reassign
           node.importKind = `value`;
         }
       },
@@ -36,7 +40,7 @@ export default function (babel) {
         const node = path.node;
 
         if (node.exportKind === `type`) {
-          const {declaration, specifiers} = node;
+          const {declaration} = node;
 
           node.exportKind = `value`;
 

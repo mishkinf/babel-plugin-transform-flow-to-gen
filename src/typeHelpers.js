@@ -138,7 +138,7 @@ export const mock = () =>
     undef(),
     () =>
       // use a jest mock if this is being run with jest
-      typeof jest === `object` ? gen.return(jest.fn()) : gen.return(() => {}),
+      (typeof jest === `object` ? gen.return(jest.fn()) : gen.return(() => {})),
   );
 
 export const garbage = () => gen.any;

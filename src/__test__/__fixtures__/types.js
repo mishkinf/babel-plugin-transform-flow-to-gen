@@ -1,4 +1,5 @@
 // @flow
+/* eslint-disable */
 
 import type {$Gen} from 'babel-plugin-transform-flow-to-gen/Gen';
 type Pizza = 'pizza';

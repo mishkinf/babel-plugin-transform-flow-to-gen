@@ -10,6 +10,7 @@ export function loadFixture(fileName) {
   });
 
   if (process.env.DEBUG) {
+    // eslint-disable-next-line no-console
     console.log(code);
   }
 

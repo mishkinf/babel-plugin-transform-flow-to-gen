@@ -1,6 +1,5 @@
 import {sample} from 'testcheck';
 import * as types from '../typeHelpers';
-import GEN from '../GEN_ID';
 
 describe(`typeHelpers`, () => {
   describe(`object`, () => {

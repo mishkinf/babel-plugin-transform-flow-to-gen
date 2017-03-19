@@ -29,7 +29,6 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
     FoodForMovies,
     Job,
     Person,
-    RecursiveThing,
     Worker,
   } = typesFixture;
 
@@ -157,8 +156,11 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
   });
 
   it(`can pass along re-exported types`, () => {
+    // eslint-disable-next-line no-prototype-builtins
     expect(typesFixture.hasOwnProperty(`Pizza`)).toEqual(true);
+    // eslint-disable-next-line no-prototype-builtins
     expect(typesFixture.hasOwnProperty(`IceCream`)).toEqual(true);
+    // eslint-disable-next-line no-prototype-builtins
     expect(typesFixture.hasOwnProperty(`Tacos`)).toEqual(true);
   });
 

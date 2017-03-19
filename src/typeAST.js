@@ -2,7 +2,7 @@ const SPECIAL_GENERICS = {
   Array(params) {
     return {type: `array`, elementType: params[0]};
   },
-  Object(params) {
+  Object() {
     return {type: `object`, members: {}, indexers: []};
   },
   $Gen(params) {
@@ -34,9 +34,9 @@ export default function typeAST(path, optional = false) {
 
       if (SPECIAL_GENERICS[name]) {
         return {...SPECIAL_GENERICS[name](args), optional};
-      } else {
-        return {type: `typeAlias`, optional, name, args};
       }
+
+      return {type: `typeAlias`, optional, name, args};
     }
     case `object`: {
       const members = path.properties.reduce(

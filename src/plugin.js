@@ -1,3 +1,4 @@
+import GEN from './GEN_ID';
 import transformType from './transformType';
 import transformFunction from './transformFunction';
 
@@ -13,10 +14,10 @@ export default function(babel) {
     }
 
     return path;
-  }
+  };
 
   let nameCount = 0;
-  const nextName = () => `__FN_EXPRESSION_NAME_${nameCount++}__`;
+  const nextName = () => `${GEN}_EXP_${nameCount++}__`;
 
   return {
     inherits: require(`babel-plugin-syntax-flow`),
@@ -88,11 +89,11 @@ export default function(babel) {
 
       ArrowFunctionExpression(path) {
         const id = t.identifier(nextName());
-        const params = path.get('params').map(p => p.node);
-        let body = path.get('body').node;
+        const params = path.node.params;
+        let body = path.node.body;
 
         if (!t.isBlockStatement(body)) {
-          body = t.blockStatement([t.returnStatement(body)])
+          body = t.blockStatement([t.returnStatement(body)]);
         }
 
         const exp = t.functionExpression(id, params, body);

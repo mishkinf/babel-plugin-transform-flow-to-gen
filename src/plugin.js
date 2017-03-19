@@ -12,13 +12,7 @@ export default function (babel) {
     path.params.every(p => !!p.typeAnnotation)
   );
 
-  const walkToScope = path => {
-    while (!t.SCOPABLE_TYPES.includes(path.parentPath.type)) {
-      path = path.parentPath;
-    }
-
-    return path;
-  };
+  const walkToScope = path => path.findParent(p => p.parentPath.isScopable());
 
   const namedExport = (input, output) => (
     {

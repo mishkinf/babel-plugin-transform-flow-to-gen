@@ -8,14 +8,15 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint --fix --ext .js src/",
+    "precommit": "npm run test && npm run lint",
     "prepublish": "rm -rf lib && babel src --out-dir lib --ignore __test__,test.js",
     "postpublish": "rm -rf lib",
-    "release": "np",
-    "prettier": "prettier --single-quote --bracket-spacing=false --trailing-comma=all --parser=flow --print-width=100 --write **/*.js"
+    "release": "np"
   },
   "dependencies": {
     "babel-plugin-syntax-flow": "^6.18.0",
     "eslint-plugin-flowtype": "^2.29.2",
+    "husky": "^0.13.2",
     "testcheck": "^0.1.4"
   },
   "devDependencies": {
@@ -33,7 +34,8 @@
     "eslint-plugin-import": "^2.2.0",
     "jest": "^18.1.0",
     "np": "^2.12.0",
-    "prettier": "^0.22.0"
+    "prettier": "^0.22.0",
+    "prettier-eslint": "^4.3.2"
   },
   "babel": {
     "presets": [
@@ -58,6 +60,14 @@
       "node": true,
       "browser": true,
       "jest": true
+    },
+    "prettierOptions": {
+      "singleQuote": true,
+      "brackSpacing": false,
+      "trailingComma": "all",
+      "parser": "flow",
+      "printWidth": 100,
+      "write": "**/*.js"
     },
     "rules": {
       "arrow-parens": [

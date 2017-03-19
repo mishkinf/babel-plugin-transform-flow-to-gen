@@ -14,6 +14,7 @@ export default function (babel) {
 
   const walkToScope = path => path.findParent(p => p.parentPath.isScopable());
 
+  // TODO figure out which what helper function is supposed to create this node...
   const namedExport = (input, output) => (
     {
       type: `ExportNamedDeclaration`,

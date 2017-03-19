@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
 
-import GEN from './GEN_ID';
 import transformType from './transformType';
 import transformFunction from './transformFunction';
 
@@ -18,11 +17,13 @@ export default function (babel) {
     return path;
   };
 
-  let nameCount = 0;
-  const nextName = () => {
-    nameCount += 1;
-    return `${GEN}_EXP_${nameCount}__`;
-  };
+  const namedExport = (input, output) => (
+    {
+      type: `ExportNamedDeclaration`,
+      specifiers: [t.exportSpecifier(input, output)],
+      exportKind: `value`,
+    }
+  );
 
   return {
     inherits: require(`babel-plugin-syntax-flow`),
@@ -39,20 +40,17 @@ export default function (babel) {
       ExportNamedDeclaration(path) {
         const node = path.node;
 
-        if (node.exportKind === `type`) {
-          const {declaration} = node;
+        if (node.exportKind === `value`) {
+          return;
+        }
 
-          node.exportKind = `value`;
+        const {declaration} = node;
 
-          if (declaration) {
-            const namedExport = {
-              type: `ExportNamedDeclaration`,
-              specifiers: [t.exportSpecifier(declaration.id, declaration.id)],
-              exportKind: `value`,
-            };
+        node.exportKind = `value`;
 
-            path.replaceWithMultiple([declaration, namedExport]);
-          }
+        if (declaration) {
+          const {id} = declaration;
+          path.replaceWithMultiple([declaration, namedExport(id, id)]);
         }
       },
 
@@ -77,13 +75,13 @@ export default function (babel) {
       },
 
       FunctionExpression(path) {
-        const node = path.node;
+        const {node, parentPath} = path;
 
         if (!allParamsAreTyped(node)) {
           return;
         }
 
-        if (t.isVariableDeclarator(path.parentPath)) {
+        if (t.isVariableDeclarator(parentPath)) {
           const {name} = path.parentPath.node.id;
           const fn = transformFunction(name, node.params, node.typeParameters);
           const root = walkToScope(path);
@@ -91,13 +89,12 @@ export default function (babel) {
           root.replaceWithMultiple(nodes);
         }
 
-        if (t.isReturnStatement(path.parentPath)) {
-          node.id = node.id || t.identifier(nextName());
+        if (t.isReturnStatement(parentPath)) {
+          node.id = path.scope.generateUidIdentifier((node.id && node.id.name) || undefined);
           const {name} = node.id;
           const fn = transformFunction(name, node.params, node.typeParameters);
-          const root = path.parentPath;
           const nodes = [node].concat(fn).concat(t.returnStatement(t.identifier(name)));
-          root.replaceWithMultiple(nodes);
+          parentPath.replaceWithMultiple(nodes);
         }
       },
 
@@ -105,7 +102,7 @@ export default function (babel) {
       ArrowFunctionExpression(path) {
         const node = path.node;
 
-        const id = t.identifier(nextName());
+        const id = path.scope.generateUidIdentifier();
         const params = node.params;
         let body = node.body;
 

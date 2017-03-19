@@ -6,8 +6,11 @@ import transformFunction from './transformFunction';
 export default function (babel) {
   const {types: t} = babel;
 
-  const allParamsAreTyped = path =>
-    !!(path.params && path.params.length > 0 && path.params.every(p => !!p.typeAnnotation));
+  const allParamsAreTyped = path => !!(
+    path.params &&
+    path.params.length > 0 &&
+    path.params.every(p => !!p.typeAnnotation)
+  );
 
   const walkToScope = path => {
     while (!t.SCOPABLE_TYPES.includes(path.parentPath.type)) {
@@ -82,7 +85,7 @@ export default function (babel) {
         }
 
         if (t.isVariableDeclarator(parentPath)) {
-          const {name} = path.parentPath.node.id;
+          const {name} = parentPath.node.id;
           const fn = transformFunction(name, node.params, node.typeParameters);
           const root = walkToScope(path);
           const nodes = [root.node].concat(fn);
@@ -113,7 +116,7 @@ export default function (babel) {
         const exp = t.functionExpression(id, params, body);
         exp.typeParameters = node.typeParameters;
 
-        path.replaceWith(exp);
+        path.replaceWithMultiple([exp]);
       },
     },
   };

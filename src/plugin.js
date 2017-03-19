@@ -7,21 +7,16 @@ export default function(babel) {
   const allParamsAreTyped = path =>
     !!(path.params && path.params.length > 0 && path.params.every(p => !!p.typeAnnotation));
 
-  const isTopLevelExport = path =>
-    !!(t.isExportDefaultDeclaration(path.parentPath) ||
-      t.isExportNamedDeclaration(path.parentPath) ||
-      (t.isVariableDeclarator(path.parentPath) &&
-        t.isVariableDeclaration(path.parentPath.parentPath) &&
-        isTopLevelExport(path.parentPath.parentPath)));
-
-  const walkToRoot = path => {
-    while (!t.isProgram(path.parentPath)) {
-      // eslint-disable-next-line no-param-reassign
+  const walkToScope = path => {
+    while (!t.SCOPABLE_TYPES.includes(path.parentPath.type)) {
       path = path.parentPath;
     }
 
     return path;
-  };
+  }
+
+  let nameCount = 0;
+  const nextName = () => `__FN_EXPRESSION_NAME_${nameCount++}__`;
 
   return {
     inherits: require(`babel-plugin-syntax-flow`),
@@ -59,36 +54,45 @@ export default function(babel) {
       },
 
       FunctionDeclaration(path) {
-        if (allParamsAreTyped(path.node) && isTopLevelExport(path)) {
+        if (allParamsAreTyped(path.node)) {
           const name = path.node.id.name;
           const fn = transformFunction(name, path.node.params, path.node.typeParameters);
-          const root = walkToRoot(path);
+          const root = walkToScope(path);
           root.insertAfter(fn);
         }
       },
 
       FunctionExpression(path) {
-        if (
-          allParamsAreTyped(path.node) &&
-          isTopLevelExport(path) &&
-          t.isVariableDeclarator(path.parentPath)
-        ) {
+        if (!allParamsAreTyped(path.node)) {
+          return;
+        }
+
+        if (t.isVariableDeclarator(path.parentPath)) {
           const {name} = path.parentPath.node.id;
           const fn = transformFunction(name, path.node.params, path.node.typeParameters);
-          const root = walkToRoot(path);
+          const root = walkToScope(path);
           root.insertAfter(fn);
+        }
+
+        if (t.isReturnStatement(path.parentPath)) {
+          path.node.id = path.node.id || t.identifier(nextName());
+          const {name} = path.node.id;
+          const fn = transformFunction(name, path.node.params, path.node.typeParameters);
+          const root = path.parentPath;
+          const nodes = [path.node].concat(fn).concat(t.returnStatement(t.identifier(name)));
+          root.replaceWithMultiple(nodes);
         }
       },
 
       ArrowFunctionExpression(path) {
         if (
           allParamsAreTyped(path.node) &&
-          isTopLevelExport(path) &&
+          path.parentPath.node.id &&
           !t.isCallExpression(path.parentPath)
         ) {
           const name = path.parentPath.node.id.name;
           const fn = transformFunction(name, path.node.params, path.node.typeParameters);
-          const root = walkToRoot(path);
+          const root = walkToScope(path);
           root.insertAfter(fn);
         }
       },

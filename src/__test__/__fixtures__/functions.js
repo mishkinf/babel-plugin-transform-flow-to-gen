@@ -41,9 +41,21 @@ export const setNameWithGeneric = <T>(person: Person<T>, name: string) => ({
 export const someObject = {
   a: () => {},
   b: function B() {},
-  c: function C() {}
+  c: function C(a: string) {}
 };
 
 export const higherOrder = (a: string) => (b: string) => {};
+
+export function nestedFunction(_: string) {
+  return function(a: string, b: number) {
+  }
+}
+
+export function otherNestedFunction() {
+  const a = function(b: number) {};
+  const b = function(a: string) {};
+
+  return {a,b};
+}
 
 export default function defaultExport(b: string) {}

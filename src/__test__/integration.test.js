@@ -161,4 +161,16 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
     expect(typesFixture.hasOwnProperty('IceCream')).toEqual(true);
     expect(typesFixture.hasOwnProperty('Tacos')).toEqual(true);
   });
+
+  it(`can add generators to nested functions`, () => {
+    const {
+      nestedFunction,
+      otherNestedFunction
+    } = loadFixture(`functions`);
+
+    expectType(nestedFunction.asGenerator, `function`);
+    expectType(nestedFunction().asGenerator, `function`);
+    expectType(otherNestedFunction().a.asGenerator, `function`);
+    expectType(otherNestedFunction().b.asGenerator, `function`);
+  })
 });

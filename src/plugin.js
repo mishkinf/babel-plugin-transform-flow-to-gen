@@ -69,6 +69,7 @@ export default function (babel) {
         const fn = transformFunction(name, node.params, node.typeParameters);
         const root = walkToScope(path);
         const nodes = [root.node].concat(fn);
+
         root.replaceWithMultiple(nodes);
       },
 
@@ -88,7 +89,7 @@ export default function (babel) {
         }
 
         if (t.isReturnStatement(parentPath)) {
-          node.id = path.scope.generateUidIdentifier((node.id && node.id.name) || undefined);
+          node.id = path.scope.generateUidIdentifierBasedOnNode(node);
           const {name} = node.id;
           const fn = transformFunction(name, node.params, node.typeParameters);
           const nodes = [node].concat(fn).concat(t.returnStatement(t.identifier(name)));
@@ -100,7 +101,7 @@ export default function (babel) {
       ArrowFunctionExpression(path) {
         const node = path.node;
 
-        const id = path.scope.generateUidIdentifier();
+        const id = path.scope.generateUidIdentifier(node);
         const params = node.params;
         let body = node.body;
 

@@ -1,9 +1,8 @@
 import * as babel from 'babel-core';
 import GEN from './GEN_ID';
+import expression from './expression';
 
 const {types: t} = babel;
-
-const expression = (str, args) => babel.template(str)(args).expression;
 
 function typeToGen(obj, params = []) {
   switch (obj.type) {

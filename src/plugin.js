@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 
+import expression from './expression';
 import transformType from './transformType';
 import transformFunction from './transformFunction';
 
@@ -13,15 +14,6 @@ export default function (babel) {
   );
 
   const walkToScope = path => path.findParent(p => p.parentPath.isScopable());
-
-  // TODO figure out which what helper function is supposed to create this node...
-  const namedExport = (input, output) => (
-    {
-      type: `ExportNamedDeclaration`,
-      specifiers: [t.exportSpecifier(input, output)],
-      exportKind: `value`,
-    }
-  );
 
   return {
     inherits: require(`babel-plugin-syntax-flow`),
@@ -48,7 +40,7 @@ export default function (babel) {
 
         if (declaration) {
           const {id} = declaration;
-          path.replaceWithMultiple([declaration, namedExport(id, id)]);
+          path.replaceWithMultiple([declaration, expression(`exports.KEY = KEY`, {KEY: id})])
         }
       },
 

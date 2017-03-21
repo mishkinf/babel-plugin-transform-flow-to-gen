@@ -6,7 +6,6 @@ import transformFunction from './transformFunction';
 
 export default function (babel) {
   const {types: t} = babel;
-
   const allParamsAreTyped = path => !!(
     path.params &&
     path.params.length > 0 &&
@@ -40,7 +39,7 @@ export default function (babel) {
 
         if (declaration) {
           const {id} = declaration;
-          path.replaceWithMultiple([declaration, expression(`exports.KEY = KEY`, {KEY: id})])
+          path.replaceWithMultiple([declaration, expression(`exports.KEY = KEY`, {KEY: id})]);
         }
       },
 
@@ -105,6 +104,63 @@ export default function (babel) {
         exp.typeParameters = node.typeParameters;
 
         path.replaceWithMultiple([exp]);
+      },
+
+      ObjectExpression(path) {
+        if (!path.parentPath.isVariableDeclarator()) {
+          return;
+        }
+
+        const ref = path.parentPath.node.id;
+        let decl = path.findParent(p => p.isVariableDeclaration());
+
+        if (decl && decl.parentPath.isExportDeclaration()) {
+          decl = decl.parentPath;
+        }
+
+        path.traverse({
+          FunctionExpression(childPath) {
+            const prop = childPath.parentPath;
+
+            if (!prop.isProperty() || prop.parentPath !== path) {
+              return;
+            }
+
+            const key = prop.node.key;
+            const childNode = childPath.node;
+
+            const fn = transformFunction(
+              `${ref.name}.${key.name}`,
+              childNode.params,
+              childNode.typeParameters,
+            );
+
+            decl.insertAfter(fn);
+          },
+          // WIP
+          // ObjectMethod(childPath) {
+          //   if (childPath.parentPath !== path) {
+          //     return;
+          //   }
+
+          //   const key = childPath.node.key;
+
+          //   const exp = babel.template(`REF.KEY = function(){};`)({
+          //     REF: ref,
+          //     KEY: key
+          //   });
+
+          //   let decl = path.findParent(p => p.isVariableDeclaration());
+
+          //   if (decl) {
+          //     if (decl.parentPath.isExportDeclaration()) {
+          //       decl = decl.parentPath;
+          //     }
+
+          //     decl.insertAfter(exp);
+          //   }
+          // }
+        });
       },
     },
   };

@@ -7,7 +7,8 @@ type Person<T> = {
 }
 
 type Misc = {
-  eyeColor: string };
+  eyeColor: string
+};
 
 export function concat(a: string, b: string) {
   return a + b;
@@ -41,8 +42,8 @@ export const setNameWithGeneric = <T>(person: Person<T>, name: string) => ({
 
 export const someObject = {
   a: () => {},
-  b: function B(a: string) {},
-  c(a: string) {},
+  b: function B() {},
+  c: function C(a: string) {},
 };
 
 export const higherOrder = (a: string) => (b: string) => `lol`;

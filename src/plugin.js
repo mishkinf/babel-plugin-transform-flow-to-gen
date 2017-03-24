@@ -146,35 +146,9 @@ export default function (babel) {
     }
   };
 
-  function wrap(id, node) {
-    const {params, typeParameters} = node;
-    let {body} = node;
-
-    if (!t.isBlockStatement(body)) {
-      body = t.blockStatement([t.returnStatement(body)]);
-    }
-
-    const exp = t.functionExpression(null, params, body);
-    exp.async = node.async;
-    exp.generator = node.generator;
-
-    const paramsTypeAnnotation =
-      t.tupleTypeAnnotation(params.map(p =>
-        (p.typeAnnotation ?
-        p.typeAnnotation.typeAnnotation :
-        t.anyTypeAnnotation()),
-      ));
-
-    const gen = makeGen(paramsTypeAnnotation, typeParameters);
-
-    params.forEach(param => { param.typeAnnotation = null; });
-
-    return iife({id, expression: exp, gen});
-  }
-
   return {
     name: `flow-to-gen`,
-    //inherits: require(`babel-plugin-syntax-flow`),
+    inherits: require(`babel-plugin-syntax-flow`),
     pre(state) {
       $GEN = state.scope.generateUidIdentifier(`$GEN`);
     },
@@ -232,8 +206,28 @@ export default function (babel) {
       Function: {
         exit(path) {
           const {node} = path;
+          const {params, typeParameters} = node;
           const id = path.scope.generateUidIdentifier();
-          let next = wrap(id, node);
+          let {body} = node;
+
+          if (!t.isBlockStatement(body)) {
+            body = t.blockStatement([t.returnStatement(body)]);
+          }
+
+          const exp = t.functionExpression(null, params, body);
+          exp.async = node.async;
+          exp.generator = node.generator;
+
+          const paramsTypeAnnotation =
+            t.tupleTypeAnnotation(params.map(p =>
+              (p.typeAnnotation ?
+              p.typeAnnotation.typeAnnotation :
+              t.anyTypeAnnotation()),
+            ));
+
+          const gen = makeGen(paramsTypeAnnotation, typeParameters);
+
+          let next = iife({id, expression: exp, gen});
 
           if (t.isFunctionDeclaration(path)) {
             next =
@@ -245,10 +239,11 @@ export default function (babel) {
             next = t.objectProperty(key, next.expression);
           }
 
+          params.forEach(param => { param.typeAnnotation = null; });
           path.replaceWith(next);
           path.skip();
-        }
-      }
+        },
+      },
     },
   };
 }

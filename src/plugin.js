@@ -174,7 +174,7 @@ export default function (babel) {
 
   return {
     name: `flow-to-gen`,
-    inherits: require(`babel-plugin-syntax-flow`),
+    //inherits: require(`babel-plugin-syntax-flow`),
     pre(state) {
       $GEN = state.scope.generateUidIdentifier(`$GEN`);
     },
@@ -229,55 +229,26 @@ export default function (babel) {
         path.replaceWith(next);
         path.skip();
       },
-      ObjectMethod: {
-        exit(path) {
-          const {node} = path;
-          const {key} = node;
-          const id = path.scope.generateUidIdentifier(key.name);
-
-          const next = wrap(id, node);
-          const prop = t.objectProperty(key, next.expression);
-
-          path.replaceWith(prop);
-          path.skip();
-        },
-      },
-      FunctionExpression: {
+      Function: {
         exit(path) {
           const {node} = path;
           const id = path.scope.generateUidIdentifier();
+          let next = wrap(id, node);
 
-          path.replaceWith(wrap(id, node));
-          path.skip();
-        },
-      },
-
-      FunctionDeclaration: {
-        exit(path) {
-          const {node} = path;
-          const id = path.scope.generateUidIdentifier(node.id.name);
-          const exp = wrap(id, node);
-
-          const next =
-            babel.template(`
-                const id = exp;
-            `)({id: node.id, exp});
+          if (t.isFunctionDeclaration(path)) {
+            next =
+              babel.template(`
+                  const id = next;
+              `)({id: node.id, next});
+          } else if (t.isObjectMethod(path)) {
+            const {key} = node;
+            next = t.objectProperty(key, next.expression);
+          }
 
           path.replaceWith(next);
           path.skip();
-        },
-      },
-      ArrowFunctionExpression: {
-        exit(path) {
-          const {node} = path;
-          const id = path.scope.generateUidIdentifier();
-
-          path.replaceWith(wrap(id, node));
-          path.skip();
-        },
-      },
+        }
+      }
     },
   };
 }
-
-// http://astexplorer.net/#/gist/caebd10d5aaee648c51096c39077b82e/f74ed4ef95b5e0abf88ba31753e45224c4a9fd0e

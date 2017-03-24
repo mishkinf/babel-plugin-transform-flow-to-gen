@@ -4,22 +4,24 @@ const error = msg => {
   throw new Error(`babel-plugin-transform-flow-to-gen/types: ${msg}`);
 };
 
-const toString = Object.prototype.toString;
-
 const isUndefined = obj => typeof obj === `undefined`;
 const isFunction = obj => typeof obj === `function`;
 const isObject = obj =>
-  !Array.isArray(obj) && typeof obj === `object` && toString.call(obj) === `[object Object]`;
+  !Array.isArray(obj) &&
+  typeof obj === `object` &&
+  Object.prototype.toString.call(obj) === `[object Object]`;
 
-export const plainObject = shape => {
+export const object = (shape, indexers = []) => {
   if (!isObject(shape)) {
     error(`types.object did not receive object as it's argument.`);
   }
 
-  return gen.object(shape);
+  return combine(
+    (...args) => Object.assign({}, ...args),
+    gen.object(shape),
+    ...indexers.map(([key, value]) => gen.object(key, value)),
+  );
 };
-
-export const indexedObject = (keyGen, valueGen) => gen.object(keyGen, valueGen);
 
 export const array = type => {
   if (isUndefined(type)) {
@@ -80,25 +82,28 @@ export const keys = type => {
     error(`types.keys expected an argument.`);
   }
 
-  return gen.bind(type, obj => {
-    if (!isObject(obj)) {
-      error(`types.keys expected a object generator.`);
-    }
+  const key =
+    gen.bind(type, obj => {
+      if (!isObject(obj)) {
+        error(`types.keys expected a object generator.`);
+      }
 
-    const keyss = Object.keys(obj);
-    return gen.returnOneOf(keyss);
-  });
+      const _keys = Object.keys(obj);
+      return gen.returnOneOf(_keys);
+    });
+
+  return array(key);
 };
 
 export const shape = type =>
-  gen.bind(array(keys(type)), keyss =>
+  gen.bind(keys(type), _keys =>
     gen.map(
       obj => {
         if (!isObject(obj)) {
           error(`types.shape expected a object generator.`);
         }
 
-        return keyss.reduce((acc, key) => Object.assign({}, acc, {[key]: obj[key]}), obj);
+        return _keys.reduce((acc, key) => Object.assign({}, acc, {[key]: obj[key]}), obj);
       },
       type,
     ));
@@ -113,20 +118,21 @@ export const nullable = type => {
   return gen.oneOf([undef(), type]);
 };
 
-export const typeAlias = (fn, args = []) => {
-  if (!fn || !isFunction(fn.asGenerator)) {
-    error(
-      `types.typeAlias expected a typeAlias as first argument. Instead got ${JSON.stringify(fn)}.`,
-    );
+export const generic = (obj, args = []) => {
+  if (isUndefined(obj)) {
+    error(`types.generic expected a generator or a function to create one.`);
   }
 
-  return gen.bind(undef(), () => fn.asGenerator(...args));
+  if (obj && isFunction(obj.asGenerator)) {
+    return gen.bind(undef(), () => obj.asGenerator(...args));
+  }
+  return obj;
 };
 
 export const map = (type, mapFn) => {
   if (!isFunction(mapFn)) {
     error(
-      `types.:ap expected a generator function as first argument. Instead got ${JSON.stringify(mapFn)}.`,
+      `types.map expected a generator function as first argument. Instead got ${JSON.stringify(mapFn)}.`,
     );
   }
 

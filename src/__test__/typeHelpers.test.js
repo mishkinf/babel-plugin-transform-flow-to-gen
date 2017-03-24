@@ -1,12 +1,13 @@
-import {sample} from 'testcheck';
+import sample from '../sample';
+import sampleOne from '../sampleOne';
 import * as types from '../typeHelpers';
 
 describe(`typeHelpers`, () => {
   describe(`object`, () => {
     it(`returns a generated object`, () => {
-      const gen = types.plainObject({
+      const gen = types.object({
         firstName: types.string(),
-        friends: types.array(types.plainObject({})),
+        friends: types.array(types.object({})),
       });
 
       sample(gen).forEach(s => {
@@ -18,7 +19,7 @@ describe(`typeHelpers`, () => {
 
     it(`throws when it does not receive an object`, () => {
       expect(() => {
-        types.plainObject();
+        types.object();
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
     });
   });
@@ -101,8 +102,8 @@ describe(`typeHelpers`, () => {
   describe(`intersection`, () => {
     it(`returns a generated intersection of many types`, () => {
       const gen = types.intersection([
-        types.plainObject({a: types.string(), b: types.string()}),
-        types.plainObject({c: types.number(), d: types.boolean()}),
+        types.object({a: types.string(), b: types.string()}),
+        types.object({c: types.number(), d: types.boolean()}),
       ]);
 
       sample(gen).forEach(s => {
@@ -120,8 +121,8 @@ describe(`typeHelpers`, () => {
 
       expect(() => {
         types.intersection(
-          types.plainObject({a: types.string(), b: types.string()}),
-          types.plainObject({c: types.number(), d: types.boolean()}),
+          types.object({a: types.string(), b: types.string()}),
+          types.object({c: types.number(), d: types.boolean()}),
         );
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
     });
@@ -130,8 +131,8 @@ describe(`typeHelpers`, () => {
   describe(`tuple`, () => {
     it(`returns a generated tuple of types`, () => {
       const gen = types.tuple([
-        types.plainObject({a: types.string(), b: types.string()}),
-        types.plainObject({c: types.number(), d: types.boolean()}),
+        types.object({a: types.string(), b: types.string()}),
+        types.object({c: types.number(), d: types.boolean()}),
       ]);
 
       sample(gen).forEach(s => {
@@ -149,8 +150,8 @@ describe(`typeHelpers`, () => {
 
       expect(() => {
         types.tuple(
-          types.plainObject({a: types.string(), b: types.string()}),
-          types.plainObject({c: types.number(), d: types.boolean()}),
+          types.object({a: types.string(), b: types.string()}),
+          types.object({c: types.number(), d: types.boolean()}),
         );
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
     });
@@ -176,11 +177,11 @@ describe(`typeHelpers`, () => {
     });
   });
 
-  describe(`typeAlias`, () => {
+  describe(`generic`, () => {
     it(`lazily wraps a function that returns a generator`, () => {
       const mock = {asGenerator: jest.fn(() => types.string())};
 
-      const gen = types.typeAlias(mock, []);
+      const gen = types.generic(mock, []);
 
       expect(mock.asGenerator).toHaveBeenCalledTimes(0);
 
@@ -195,15 +196,7 @@ describe(`typeHelpers`, () => {
 
     it(`throws when it does not receive a generator`, () => {
       expect(() => {
-        types.typeAlias();
-      }).toThrow(/babel-plugin-transform-flow-to-gen/);
-
-      expect(() => {
-        types.typeAlias({});
-      }).toThrow(/babel-plugin-transform-flow-to-gen/);
-
-      expect(() => {
-        types.typeAlias(() => {});
+        types.generic();
       }).toThrow(/babel-plugin-transform-flow-to-gen/);
     });
   });
@@ -217,11 +210,12 @@ describe(`typeHelpers`, () => {
         d: types.string(),
       };
 
-      const gen = types.plainObject(obj);
-      const samp = sample(types.keys(gen));
+      const gen = types.object(obj);
+      const samp = sampleOne(types.keys(gen));
+      const keys = Object.keys(obj);
 
       samp.forEach(s => {
-        expect(Object.keys(obj)).toContain(s);
+        expect(keys).toContain(s);
       });
     });
 

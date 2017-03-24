@@ -35,7 +35,7 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
   it(`works with simple types`, () => {
     sample(Person()).forEach(isPerson);
 
-    const other = types.plainObject({
+    const other = types.object({
       a: types.string(),
       b: types.boolean(),
     });

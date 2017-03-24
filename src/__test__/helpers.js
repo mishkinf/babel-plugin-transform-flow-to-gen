@@ -6,7 +6,7 @@ export function loadFixture(fileName) {
   const filePath = path.join(__dirname, `./__fixtures__`, `${fileName}.js`);
   const {code} = babel.transformFileSync(filePath, {
     sourceType: `module`,
-    plugins: [`syntax-flow`, plugin, `transform-flow-comments`],
+    plugins: [`syntax-flow`, plugin],
   });
 
   if (process.env.DEBUG) {

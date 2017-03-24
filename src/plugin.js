@@ -8,7 +8,7 @@ export default function (babel) {
 
   const iife = babel.template(`
       (function() {
-        const id = expression;
+        const id = exp;
         id.asGenerator = gen;
         return id;
       })();
@@ -191,7 +191,7 @@ export default function (babel) {
 
         const exp = iife({
           id,
-          expression: gen,
+          exp: gen,
           gen: id,
         });
 
@@ -227,7 +227,7 @@ export default function (babel) {
 
           const gen = makeGen(paramsTypeAnnotation, typeParameters);
 
-          let next = iife({id, expression: exp, gen});
+          let next = iife({id, exp, gen});
 
           if (t.isFunctionDeclaration(path)) {
             next = babel.template(`const id = next;`)({id: node.id, next});

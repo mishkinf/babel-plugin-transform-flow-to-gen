@@ -174,6 +174,7 @@ export default function (babel) {
 
   return {
     name: `flow-to-gen`,
+    inherits: require("babel-plugin-syntax-flow"),
     pre(state) {
       $GEN = state.scope.generateUidIdentifier(`$GEN`);
     },

@@ -230,13 +230,9 @@ export default function (babel) {
           let next = iife({id, expression: exp, gen});
 
           if (t.isFunctionDeclaration(path)) {
-            next =
-              babel.template(`
-                  const id = next;
-              `)({id: node.id, next});
+            next = babel.template(`const id = next;`)({id: node.id, next});
           } else if (t.isObjectMethod(path)) {
-            const {key} = node;
-            next = t.objectProperty(key, next.expression);
+            next = t.objectProperty(node.key, next.expression);
           }
 
           params.forEach(param => { param.typeAnnotation = null; });

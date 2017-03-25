@@ -37,6 +37,32 @@ export default function (babel) {
   const booleanExp = expression(`$GEN.boolean()`);
   const undefinedExp = expression(`$GEN.undef()`);
 
+  const wrap = path => {
+    const {node} = path;
+    const {params, typeParameters} = node;
+    const id = path.scope.generateUidIdentifier();
+    let {body} = node;
+
+    if (!t.isBlockStatement(body)) {
+      body = t.blockStatement([t.returnStatement(body)]);
+    }
+
+    const exp = t.functionExpression(null, params, body);
+    exp.async = node.async;
+    exp.generator = node.generator;
+
+    const paramsTypeAnnotation =
+      t.tupleTypeAnnotation(params.map(p =>
+        (p.typeAnnotation ?
+        p.typeAnnotation.typeAnnotation :
+        t.anyTypeAnnotation()),
+      ));
+
+    const gen = makeGen(paramsTypeAnnotation, typeParameters);
+
+    return iife({id, exp, gen});
+  };
+
   const makeGen = (typeAnnotation, typeParameters) => {
     typeParameters = typeParameters || defaultTypeParameters;
 
@@ -148,7 +174,7 @@ export default function (babel) {
 
   return {
     name: `flow-to-gen`,
-    inherits: require(`babel-plugin-syntax-flow`),
+    //inherits: require(`babel-plugin-syntax-flow`),
     pre(state) {
       $GEN = state.scope.generateUidIdentifier(`$GEN`);
     },
@@ -206,36 +232,24 @@ export default function (babel) {
       Function: {
         exit(path) {
           const {node} = path;
-          const {params, typeParameters} = node;
-          const id = path.scope.generateUidIdentifier();
-          let {body} = node;
 
-          if (!t.isBlockStatement(body)) {
-            body = t.blockStatement([t.returnStatement(body)]);
+          if (t.isClassMethod(path) && node.kind === 'constructor') {
+            return;
           }
 
-          const exp = t.functionExpression(null, params, body);
-          exp.async = node.async;
-          exp.generator = node.generator;
-
-          const paramsTypeAnnotation =
-            t.tupleTypeAnnotation(params.map(p =>
-              (p.typeAnnotation ?
-              p.typeAnnotation.typeAnnotation :
-              t.anyTypeAnnotation()),
-            ));
-
-          const gen = makeGen(paramsTypeAnnotation, typeParameters);
-
-          let next = iife({id, exp, gen});
+          let next = wrap(path);
 
           if (t.isFunctionDeclaration(path)) {
             next = babel.template(`const id = next;`)({id: node.id, next});
           } else if (t.isObjectMethod(path)) {
             next = t.objectProperty(node.key, next.expression);
+          } else if (t.isClassMethod(path)) {
+            next = t.classProperty(node.key, next.expression);
+            next.static = node.static;
           }
 
-          params.forEach(param => { param.typeAnnotation = null; });
+          // TODO: remove if possible
+          node.params.forEach(param => { param.typeAnnotation = null; });
           path.replaceWith(next);
           path.skip();
         },

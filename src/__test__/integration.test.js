@@ -184,5 +184,6 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
 
     expectType(instance.someMethod.asGenerator, `function`);
     expectType(A.someStaticMethod.asGenerator, `function`);
+    expectType(A.asGenerator, `function`);
   });
 });

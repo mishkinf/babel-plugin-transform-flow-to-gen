@@ -243,6 +243,8 @@ export default function (babel) {
         path.replaceWith(next);
         path.skip();
       },
+      // TODO: make a copy of that class to turn it into an
+      // expression like you're doing with functions
       Class: {
         exit(path) {
         const constructor = path.get('body.body').find(isConstructor);

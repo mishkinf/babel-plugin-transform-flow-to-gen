@@ -30,7 +30,7 @@
     "eslint-plugin-flowtype": "^2.29.2",
     "eslint-plugin-import": "^2.2.0",
     "husky": "^0.13.2",
-    "jest": "^18.1.0",
+    "jest": "^19.0.2",
     "np": "^2.12.0",
     "prettier": "^0.22.0",
     "prettier-eslint": "^4.3.2"

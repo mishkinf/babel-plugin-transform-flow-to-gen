@@ -1,6 +1,4 @@
 // @flow
-/* eslint-disable */
-
 import type {$Gen} from 'babel-plugin-transform-flow-to-gen/Gen';
 type Pizza = 'pizza';
 type IceCream = 'ice cream';
@@ -82,7 +80,3 @@ export type OtherIndexer = {
 export type RecursiveThing = {
   recurse: RecursiveThing
 }
-
-/* make sure that this works. it won't resolve to anything
- * because we're not transpiling the connected files */
-export type {Pizza, IceCream, Tacos} from './__fixtures__/nestedTypes';

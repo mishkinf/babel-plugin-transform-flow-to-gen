@@ -174,7 +174,7 @@ export default function (babel) {
 
   return {
     name: `flow-to-gen`,
-    //inherits: require(`babel-plugin-syntax-flow`),
+    // inherits: require(`babel-plugin-syntax-flow`),
     pre(state) {
       $GEN = state.scope.generateUidIdentifier(`$GEN`);
     },
@@ -187,12 +187,16 @@ export default function (babel) {
         path.unshiftContainer(`body`, decl);
       },
       ExportDefaultDeclaration(path) {
-        const decl = path.node.declaration;
+        const {node} = path;
+        const decl = node.declaration;
         const id = decl.id || path.scope.generateUidIdentifier();
 
-        if (path.get(`declaration`).isFunctionDeclaration()) {
+        if (t.isFunctionDeclaration(decl)) {
           decl.expression = true;
           decl.type = `FunctionExpression`;
+        } else if (t.isClassDeclaration(decl)) {
+          decl.expression = true;
+          decl.type = `ClassExpression`;
         }
 
         const next =
@@ -233,7 +237,7 @@ export default function (babel) {
         exit(path) {
           const {node} = path;
 
-          if (t.isClassMethod(path) && node.kind === 'constructor') {
+          if (t.isClassMethod(path) && node.kind === `constructor`) {
             return;
           }
 

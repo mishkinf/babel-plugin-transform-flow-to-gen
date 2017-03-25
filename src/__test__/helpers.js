@@ -6,6 +6,7 @@ export function loadFixture(fileName) {
   const filePath = path.join(__dirname, `./__fixtures__`, `${fileName}.js`);
   const {code} = babel.transformFileSync(filePath, {
     sourceType: `module`,
+    presets: [`es2015`],
     plugins: [plugin],
   });
 

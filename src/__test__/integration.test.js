@@ -22,17 +22,13 @@ const isPerson = person => {
 };
 
 describe(`babel-plugin-transform-flow-to-gen`, () => {
-  const typesFixture = loadFixture(`types`);
-
-  const {
-    Critic,
-    FoodForMovies,
-    Job,
-    Person,
-    Worker,
-  } = typesFixture;
-
   it(`works with simple types`, () => {
+    const {
+      Job,
+      Person,
+      Worker,
+    } = loadFixture(`types`);
+
     sample(Person()).forEach(isPerson);
 
     const other = types.object({
@@ -59,6 +55,10 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
   });
 
   it(`handles special generics appropriately`, () => {
+    const {
+      Critic,
+    } = loadFixture(`types`);
+
     let foundMiscEyeColor = false;
     let foundMiscHairColor = false;
 
@@ -98,6 +98,10 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
   });
 
   it(`works with indexers on objects`, () => {
+    const {
+      FoodForMovies,
+    } = loadFixture(`types`);
+
     sample(FoodForMovies()).forEach(obj => {
       const keys = Object.keys(obj);
 
@@ -155,15 +159,6 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
     });
   });
 
-  it(`can pass along re-exported types`, () => {
-    // eslint-disable-next-line no-prototype-builtins
-    expect(typesFixture.hasOwnProperty(`Pizza`)).toEqual(true);
-    // eslint-disable-next-line no-prototype-builtins
-    expect(typesFixture.hasOwnProperty(`IceCream`)).toEqual(true);
-    // eslint-disable-next-line no-prototype-builtins
-    expect(typesFixture.hasOwnProperty(`Tacos`)).toEqual(true);
-  });
-
   it(`can add generators to nested functions`, () => {
     const {
       higherOrder,
@@ -178,5 +173,15 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
     expectType(nestedFunction().asGenerator, `function`);
     expectType(otherNestedFunction().a.asGenerator, `function`);
     expectType(otherNestedFunction().b.asGenerator, `function`);
+  });
+
+  it(`can add generators for simple classes`, () => {
+    const {
+      A,
+    } = loadFixture(`classes`);
+
+    const instance = new A();
+
+    expectType(instance.someMethod.asGenerator, `function`);
   });
 });

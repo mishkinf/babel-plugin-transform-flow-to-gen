@@ -41,15 +41,13 @@ export default function (babel) {
     const {node} = path;
     const {params, typeParameters} = node;
     const id = path.scope.generateUidIdentifier();
-    let {body} = node;
 
-    if (!t.isBlockStatement(body)) {
-      body = t.blockStatement([t.returnStatement(body)]);
+    if (!t.isBlockStatement(node.body)) {
+      node.body = t.blockStatement([t.returnStatement(node.body)]);
     }
 
-    const exp = t.functionExpression(null, params, body);
-    exp.async = node.async;
-    exp.generator = node.generator;
+    node.expression = true;
+    node.type = `FunctionExpression`;
 
     const paramsTypeAnnotation =
       t.tupleTypeAnnotation(params.map(p =>
@@ -60,7 +58,11 @@ export default function (babel) {
 
     const gen = makeGen(paramsTypeAnnotation, typeParameters);
 
-    return iife({id, exp, gen});
+    node.params.forEach(param => { param.typeAnnotation = null; });
+    node.typeParameters = null;
+    node.returnType = null;
+
+    return iife({id, exp: node, gen});
   };
 
   const makeGen = (typeAnnotation, typeParameters) => {
@@ -252,8 +254,6 @@ export default function (babel) {
             next.static = node.static;
           }
 
-          // TODO: remove if possible
-          node.params.forEach(param => { param.typeAnnotation = null; });
           path.replaceWith(next);
           path.skip();
         },

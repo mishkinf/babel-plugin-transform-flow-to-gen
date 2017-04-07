@@ -19,14 +19,14 @@ export default function (babel) {
     return obj => template({...obj, $GEN}).expression;
   };
 
-  const stripFunctionTypes = node => {
-    node.params.forEach(param => { param.typeAnnotation = null; });
+  const stripTypes = node => {
+    node.params && node.params.forEach(param => { param.typeAnnotation = null; });
     node.typeParameters = null;
     node.returnType = null;
   };
 
   const isConstructor = path =>
-    t.isClassMethod(path) && path.node.kind === 'constructor';
+    t.isClassMethod(path) && path.node.kind === `constructor`;
 
   const shapeExp = expression(`$GEN.shape(type)`);
   const keysExp = expression(`$GEN.keys(type)`);
@@ -68,7 +68,7 @@ export default function (babel) {
     const exp = t.functionExpression(null, params, body);
     exp.async = node.async;
     exp.generator = node.generator;
-    stripFunctionTypes(exp);
+    stripTypes(exp);
 
     return iife({id, exp, gen});
   };
@@ -82,6 +82,27 @@ export default function (babel) {
       }`)({
         args: typeParameters.params,
         gen: toGen(typeAnnotation),
+      });
+
+    return t.functionExpression(null, [], blockStatement);
+  };
+
+  const makeGenInstance = (id, typeAnnotation, typeParameters) => {
+    typeParameters = typeParameters || defaultTypeParameters;
+
+    const gen = toGen(typeAnnotation);
+
+    const mapToInstance = mapExp({
+      type: gen,
+      //func: expression(`function(...args) { return new id(...args); }`)({id})
+    });
+
+    const blockStatement = babel.template(`{
+        const [args] = arguments;
+        return gen;
+      }`)({
+        args: typeParameters.params,
+        gen: mapToInstance,
       });
 
     return t.functionExpression(null, [], blockStatement);
@@ -243,15 +264,13 @@ export default function (babel) {
         path.replaceWith(next);
         path.skip();
       },
-      // TODO: make a copy of that class to turn it into an
-      // expression like you're doing with functions
       Class: {
         exit(path) {
-        const constructor = path.get('body.body').find(isConstructor);
-
-        if (constructor) {
           const {node} = path;
-          const {params, typeParameters} = constructor.node;
+          const constructor = path.get(`body.body`).find(isConstructor);
+          const id = path.scope.generateUidIdentifier();
+          const typeParameters = node.typeParameters;
+          const params = !!constructor ? constructor.node.params : [];
 
           if (t.isClassDeclaration(node)) {
             node.expression = true;
@@ -260,20 +279,17 @@ export default function (babel) {
 
           const paramsTypeAnnotation =
             t.tupleTypeAnnotation(params.map(p =>
-            (p.typeAnnotation ?
+              (p.typeAnnotation ?
               p.typeAnnotation.typeAnnotation :
               t.anyTypeAnnotation()),
             ));
 
-          // TODO: make this return an instance of the class
-          // instead of just arguments for the constructor
-          // (just wrap in another generator)
-          const gen = makeGen(paramsTypeAnnotation, typeParameters);
+          const gen = makeGenInstance(id, paramsTypeAnnotation, typeParameters);
 
           const exp = iife({
-            id: path.scope.generateUidIdentifier(),
+            id,
             exp: node,
-            gen
+            gen,
           });
 
           const next =
@@ -281,12 +297,16 @@ export default function (babel) {
               const id = exp;
             `)({id: node.id, exp});
 
-          stripFunctionTypes(constructor.node);
+          if (constructor) {
+            stripTypes(constructor.node);
+          }
+
+          stripTypes(node);
           path.replaceWith(next);
           path.skip();
-        }
-        }
+        },
       },
+
       Function: {
         exit(path) {
           const {node} = path;

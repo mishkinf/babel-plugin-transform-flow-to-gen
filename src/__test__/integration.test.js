@@ -1,4 +1,5 @@
-import {sample} from 'testcheck';
+import sample from '../sample';
+import sampleOne from '../sampleOne';
 import * as types from '../typeHelpers';
 import {loadFixture, expectType} from './helpers';
 
@@ -175,15 +176,18 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
     expectType(otherNestedFunction().b.asGenerator, `function`);
   });
 
-  it(`can add generators for simple classes`, () => {
+  it.only(`can add generators for simple classes`, () => {
     const {
       A,
     } = loadFixture(`classes`);
 
     const instance = new A();
 
+    expect(instance instanceof A).toEqual(true);
     expectType(instance.someMethod.asGenerator, `function`);
     expectType(A.someStaticMethod.asGenerator, `function`);
     expectType(A.asGenerator, `function`);
+
+    expect(sampleOne(A.asGenerator()) instanceof A).toEqual(true);
   });
 });

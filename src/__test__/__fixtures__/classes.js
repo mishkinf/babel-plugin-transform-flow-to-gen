@@ -1,4 +1,8 @@
-export class A {
+class A<T> {
+  constructor() {
+
+  }
+
   static someStaticMethod(str: string) {
     return `${str}!!!`;
   }
@@ -7,3 +11,5 @@ export class A {
     return `${str}!`;
   }
 }
+
+export {A};

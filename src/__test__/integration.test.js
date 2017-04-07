@@ -1,4 +1,5 @@
-import {sample} from 'testcheck';
+import sample from '../sample';
+// import sampleOne from '../sampleOne';
 import * as types from '../typeHelpers';
 import {loadFixture, expectType} from './helpers';
 
@@ -182,8 +183,11 @@ describe(`babel-plugin-transform-flow-to-gen`, () => {
 
     const instance = new A();
 
+    expect(instance instanceof A).toEqual(true);
     expectType(instance.someMethod.asGenerator, `function`);
     expectType(A.someStaticMethod.asGenerator, `function`);
     expectType(A.asGenerator, `function`);
+
+    // expect(sampleOne(A.asGenerator()) instanceof A).toEqual(true);
   });
 });

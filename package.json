@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "babel-plugin-syntax-flow": "^6.18.0",
+    "faker": "^4.1.0",
     "testcheck": "^0.1.4"
   },
   "devDependencies": {

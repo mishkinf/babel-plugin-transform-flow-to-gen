@@ -1,26 +1,33 @@
 /* eslint-disable no-param-reassign */
-
 export default function (babel) {
-  const {types: t} = babel;
+  const { types: t } = babel;
 
   const defaultTypeParameters = t.typeParameterInstantiation([]);
   let $GEN; // assigned in pre-hook;
 
-  const iife = babel.template(`
+  const iife = babel.template(
+    `
       (function() {
         const id = exp;
         id.asGenerator = gen;
         return id;
       })();
-    `);
+    `
+  );
 
   const expression = str => {
     const template = babel.template(str);
-    return obj => template({...obj, $GEN}).expression;
+
+    return obj => {
+      return template({ ...obj, $GEN }).expression
+    };
   };
 
   const stripTypes = node => {
-    if (node.params) node.params.forEach(param => { param.typeAnnotation = null; });
+    if (node.params)
+      node.params.forEach(param => {
+        param.typeAnnotation = null;
+      });
     node.typeParameters = null;
     node.returnType = null;
   };
@@ -33,7 +40,7 @@ export default function (babel) {
   const mapExp = expression(`$GEN.map(type, func)`);
   const genericExp = expression(`$GEN.generic(type, [args])`);
   const objectExp = expression(`$GEN.object(type, indexers)`);
-  const arrayExp = expression(`$GEN.array(type)`);
+  const arrayExp = expression(`$GEN.array(type, elementType)`);
   const literalExp = expression(`$GEN.literal(id)`);
   const intersectionExp = expression(`$GEN.intersection(arr)`);
   const tupleExp = expression(`$GEN.tuple(arr)`);
@@ -47,21 +54,23 @@ export default function (babel) {
   const undefinedExp = expression(`$GEN.undef()`);
 
   const wrap = path => {
-    const {node} = path;
-    const {params, typeParameters} = node;
+    const { node } = path;
+    const { params, typeParameters } = node;
     const id = node.id || node.key || path.scope.generateUidIdentifier();
-    let {body} = node;
+    let { body } = node;
 
     if (!t.isBlockStatement(body)) {
       body = t.blockStatement([t.returnStatement(body)]);
     }
 
-    const paramsTypeAnnotation =
-      t.tupleTypeAnnotation(params.map(p =>
-        (p.typeAnnotation ?
-        p.typeAnnotation.typeAnnotation :
-        t.anyTypeAnnotation()),
-      ));
+    const paramsTypeAnnotation = t.tupleTypeAnnotation(
+      params.map(
+        p =>
+          p.typeAnnotation
+            ? p.typeAnnotation.typeAnnotation
+            : t.anyTypeAnnotation()
+      )
+    );
 
     const gen = makeGen(paramsTypeAnnotation, typeParameters);
 
@@ -70,19 +79,21 @@ export default function (babel) {
     exp.generator = node.generator;
     stripTypes(exp);
 
-    return iife({id, exp, gen});
+    return iife({ id, exp, gen });
   };
 
   const makeGen = (typeAnnotation, typeParameters) => {
     typeParameters = typeParameters || defaultTypeParameters;
 
-    const blockStatement = babel.template(`{
+    const blockStatement = babel.template(
+      `{
         const [args] = arguments;
         return gen;
-      }`)({
-        args: typeParameters.params,
-        gen: toGen(typeAnnotation),
-      });
+      }`
+    )({
+      args: typeParameters.params,
+      gen: toGen(typeAnnotation)
+    });
 
     return t.functionExpression(null, [], blockStatement);
   };
@@ -93,17 +104,19 @@ export default function (babel) {
     const gen = toGen(typeAnnotation);
 
     const mapToInstance = mapExp({
-      type: gen,
+      type: gen
       //func: expression(`function(...args) { return new id(...args); }`)({id})
     });
 
-    const blockStatement = babel.template(`{
+    const blockStatement = babel.template(
+      `{
         const [args] = arguments;
         return gen;
-      }`)({
-        args: typeParameters.params,
-        gen: mapToInstance,
-      });
+      }`
+    )({
+      args: typeParameters.params,
+      gen: mapToInstance
+    });
 
     return t.functionExpression(null, [], blockStatement);
   };
@@ -120,23 +133,23 @@ export default function (babel) {
             return toGen(t.objectTypeAnnotation([]));
           case `$Shape`: {
             const type = toGen(node.typeParameters.params[0]);
-            return shapeExp({type});
+            return shapeExp({ type });
           }
           case `$Subtype`:
             return toGen(node.typeParameters.params[0]);
           case `$Keys`: {
             const type = toGen(node.typeParameters.params[0]);
-            return keysExp({type});
+            return keysExp({ type });
           }
           case `$Gen`: {
             const [type, func] = node.typeParameters.params;
-            return mapExp({type: toGen(type), func});
+            return mapExp({ type: toGen(type), func });
           }
           default: {
             const typeParameters = node.typeParameters || defaultTypeParameters;
             return genericExp({
               type: node.id,
-              args: typeParameters.params.map(toGen),
+              args: typeParameters.params.map(toGen)
             });
           }
         }
@@ -150,42 +163,41 @@ export default function (babel) {
           return t.objectProperty(prop.key, value);
         });
 
-        const indexers = node.indexers.map(
-          idx => t.arrayExpression([toGen(idx.key), toGen(idx.value)]),
-        );
+        const indexers = node.indexers.map(idx =>
+          t.arrayExpression([toGen(idx.key), toGen(idx.value)]));
 
         return objectExp({
           type: t.objectExpression(properties),
-          indexers: t.arrayExpression(indexers),
+          indexers: t.arrayExpression(indexers)
         });
       }
       case `ArrayTypeAnnotation`: {
-        return arrayExp({type: toGen(node.elementType)});
+        return arrayExp({ type: toGen(node.elementType), elementType: node.elementType });
       }
       case `NullLiteralTypeAnnotation`: {
         const id = t.identifier(`null`);
-        return literalExp({id});
+        return literalExp({ id });
       }
       case `NumericLiteralTypeAnnotation`:
       case `StringLiteralTypeAnnotation`:
       case `BooleanLiteralTypeAnnotation`: {
         const id = t.identifier(JSON.stringify(node.value));
-        return literalExp({id});
+        return literalExp({ id });
       }
       case `IntersectionTypeAnnotation`: {
         const arr = node.types.map(toGen);
-        return intersectionExp({arr: t.arrayExpression(arr)});
+        return intersectionExp({ arr: t.arrayExpression(arr) });
       }
       case `TupleTypeAnnotation`: {
         const arr = node.types.map(toGen);
-        return tupleExp({arr: t.arrayExpression(arr)});
+        return tupleExp({ arr: t.arrayExpression(arr) });
       }
       case `UnionTypeAnnotation`: {
         const arr = node.types.map(toGen);
-        return unionExp({arr: t.arrayExpression(arr)});
+        return unionExp({ arr: t.arrayExpression(arr) });
       }
       case `NullableTypeAnnotation`:
-        return nullableExp({type: toGen(node.typeAnnotation)});
+        return nullableExp({ type: toGen(node.typeAnnotation) });
       case `FunctionTypeAnnotation`:
         return mockExp();
       case `AnyTypeAnnotation`:
@@ -211,14 +223,16 @@ export default function (babel) {
     },
     visitor: {
       Program(path) {
-        const decl = babel.template(`
+        const decl = babel.template(
+          `
           const $GEN = require('babel-plugin-transform-flow-to-gen/lib/typeHelpers');
-        `)({$GEN});
+        `
+        )({ $GEN });
 
         path.unshiftContainer(`body`, decl);
       },
       ExportDefaultDeclaration(path) {
-        const {node} = path;
+        const { node } = path;
         const decl = node.declaration;
         const id = decl.id || path.scope.generateUidIdentifier();
 
@@ -230,43 +244,45 @@ export default function (babel) {
           decl.type = `ClassExpression`;
         }
 
-        const next =
-          babel.template(`
+        const next = babel.template(
+          `
               const id = decl;
               exports.default = id;
-          `)({decl, id});
+          `
+        )({ decl, id });
 
         path.replaceWithMultiple(next);
       },
       ImportDeclaration(path) {
-        const {node} = path;
+        const { node } = path;
 
         if (node.importKind === `type`) {
           node.importKind = `value`;
         }
       },
       TypeAlias(path) {
-        const {node} = path;
+        const { node } = path;
         const id = path.scope.generateUidIdentifier(node.id.name);
         const gen = makeGen(node.right, node.typeParameters);
 
         const exp = iife({
           id,
           exp: gen,
-          gen: id,
+          gen: id
         });
 
-        const next =
-          babel.template(`
+        const next = babel.template(
+          `
             const id = exp;
-          `)({id: node.id, exp});
+          `
+        )({ id: node.id, exp });
 
         path.replaceWith(next);
         path.skip();
       },
       Class: {
         exit(path) {
-          const {node} = path;
+          const { node } = path;
           const constructor = path.get(`body.body`).find(isConstructor);
           const id = path.scope.generateUidIdentifier();
           const typeParameters = node.typeParameters;
@@ -277,25 +293,28 @@ export default function (babel) {
             node.type = `ClassExpression`;
           }
 
-          const paramsTypeAnnotation =
-            t.tupleTypeAnnotation(params.map(p =>
-              (p.typeAnnotation ?
-              p.typeAnnotation.typeAnnotation :
-              t.anyTypeAnnotation()),
-            ));
+          const paramsTypeAnnotation = t.tupleTypeAnnotation(
+            params.map(
+              p =>
+                p.typeAnnotation
+                  ? p.typeAnnotation.typeAnnotation
+                  : t.anyTypeAnnotation()
+            )
+          );
 
           const gen = makeGenInstance(id, paramsTypeAnnotation, typeParameters);
 
           const exp = iife({
             id,
             exp: node,
-            gen,
+            gen
           });
 
-          const next =
-            babel.template(`
+          const next = babel.template(
+            `
               const id = exp;
-            `)({id: node.id, exp});
+            `
+          )({ id: node.id, exp });
 
           if (constructor) {
             stripTypes(constructor.node);
@@ -304,12 +323,12 @@ export default function (babel) {
           stripTypes(node);
           path.replaceWith(next);
           path.skip();
-        },
+        }
       },
 
       Function: {
         exit(path) {
-          const {node} = path;
+          const { node } = path;
 
           if (isConstructor(path)) {
             return;
@@ -318,7 +337,7 @@ export default function (babel) {
           let next = wrap(path);
 
           if (t.isFunctionDeclaration(path)) {
-            next = babel.template(`const id = next;`)({id: node.id, next});
+            next = babel.template(`const id = next;`)({ id: node.id, next });
           } else if (t.isObjectMethod(path)) {
             next = t.objectProperty(node.key, next.expression);
           } else if (t.isClassMethod(path)) {
@@ -328,8 +347,8 @@ export default function (babel) {
 
           path.replaceWith(next);
           path.skip();
-        },
-      },
-    },
+        }
+      }
+    }
   };
 }
